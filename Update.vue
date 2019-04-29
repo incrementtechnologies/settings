@@ -81,14 +81,14 @@ export default {
       for (var i = 0; i < this.menu.length; i++) {
         if(this.parameter === this.menu[i].type){
           flag = true
-          this.makeActive(i)
+          this.makeActive(this.menu[i].type)
         }
       }
       if(flag === false){
-        this.makeActive(0)
+        this.makeActive('profile')
       }
     }else{
-      this.makeActive(0)
+      this.makeActive('profile')
     }
   },
   data(){

@@ -1,5 +1,5 @@
 <template>
-  <div class="holder">
+  <div class="notification-holder">
     <span class="header">Email</span>
     <span class="content">
       <span class="inputs">
@@ -36,7 +36,7 @@
   </div>
 </template>
 <style scoped>
-.holder{
+.notification-holder{
   width: 95%;
   float: left;
   margin-left: 5%;

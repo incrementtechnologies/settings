@@ -1,5 +1,5 @@
 <template>
-  <div class="holder" id="paymentMethod">
+  <div class="payment-holder" id="paymentMethod">
     <span class="header">
       Payment Accounts
       <button class="btn btn-primary pull-right" @click="activateNewPayment()"> New Payment Method</button>
@@ -86,7 +86,7 @@
   </div>
 </template>
 <style scoped>
-.holder{
+.payment-holder{
   width: 95%;
   float: left;
   margin-left: 5%;

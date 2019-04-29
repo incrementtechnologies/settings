@@ -1,5 +1,5 @@
 <template>
-  <div class="holder">
+  <div class="account-holder">
     <span class="header">Account</span>
     <span class="content">
       <span class="error text-danger" v-if="errorMessageEmail !== null">
@@ -43,7 +43,7 @@
   </div>
 </template>
 <style scoped>
-.holder{
+.account-holder{
   width: 95%;
   float: left;
   margin-left: 5%;

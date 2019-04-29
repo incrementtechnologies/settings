@@ -1,5 +1,5 @@
 <template>
-  <div class="holder" v-if="data !== null">
+  <div class="merchant-holder" v-if="data !== null">
     <span class="header">Merchant Settings</span>
     <span class="content">
       <span class="error text-danger" v-if="errorMessage !== null">
@@ -44,7 +44,7 @@
   </div>
 </template>
 <style scoped>
-.holder{
+.merchant-holder{
   width: 95%;
   float: left;
   margin-left: 5%;

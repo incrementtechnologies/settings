@@ -1,5 +1,5 @@
 <template>
-  <div class="holder">
+  <div class="profile-holder">
     <span class="header">Profile</span>
     <span class="content">
       <span class="inputs" v-if="data !== null">
@@ -61,7 +61,7 @@
   </div>
 </template>
 <style scoped>
-.holder{
+.profile-holder{
   width: 95%;
   float: left;
   margin-left: 5%;
