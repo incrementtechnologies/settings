@@ -2,7 +2,8 @@
   <div class="payment-holder" id="paymentMethod">
     <span class="header">
       Payment Accounts
-      <button class="btn btn-primary pull-right" @click="activateNewPayment()"> New Payment Method</button>
+      <button class="btn btn-primary pull-right hide" @click="activateNewPayment()"> New Payment Method</button>
+      <i class="fa fa-plus pull-right" @click="activateNewPayment()" style="line-height: 50px;"></i>
     </span>
     <span class="account-item" v-if="data !== null" v-for="item, index in data">
       <label v-if="item.stripe !== null">
@@ -201,6 +202,9 @@
     width: 100%;
     margin-right: 0%;
     margin-left: 0%;
+  }
+  .hide{
+    display: none;
   }
 }
 </style>

@@ -1,10 +1,18 @@
 <template>
   <div class="update-holder">
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{!title ? 'Show Menu' : title}}
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <span class="dropdown-item" v-for="item, index in menu" @click="makeActive(item.type, item.title)">{{item.title}}</span>
+      </div>
+    </div>
     <div class="sidebar">
       <span class="header">
         Personal Settings
       </span>
-      <span class="item" v-bind:class="{'make-active': item.type === activeType}" v-for="item, index in menu" v-if="menu !== null" @click="makeActive(item.type)">
+      <span class="item" v-bind:class="{'make-active': item.type === activeType}" v-for="item, index in menu" v-if="menu !== null" @click="makeActive(item.type, item.title)">
         {{item.title}}
       </span>
     </div>
@@ -24,6 +32,7 @@
   width: 100%;
   float: left;
   margin-top: 25px;
+  margin-bottom: 200px;
 }
 
 .sidebar{
@@ -67,6 +76,30 @@
   min-height: 50px;
   overflow-y: hidden;
 }
+.dropdown{
+  width: 100%;
+  display: none;
+}
+.custom-block-btn{
+  width: 100% !important;
+  text-align: right;
+  padding-right: 10px;
+}
+@media screen and (max-width: 992px){
+  .sidebar{
+    display: none;
+  }
+  .content{
+    width: 100%;
+  }
+  .dropdown{
+    display: block;
+  }
+  .btn-primary.active, .btn-primary:active, .show>.btn-primary.dropdown-toggle{
+    background: #028170;
+    border-color: #028170;
+  }
+}
 </style>
 <script>
 import ROUTER from '../../../router'
@@ -105,7 +138,8 @@ export default {
         {title: 'Notifications', type: 'notification'}
       ],
       activeType: 'profile',
-      parameter: this.$route.params.parameter
+      parameter: this.$route.params.parameter,
+      title: 'Show Menu'
     }
   },
   components: {
@@ -120,8 +154,9 @@ export default {
     redirect(path){
       ROUTER.push(path)
     },
-    makeActive(type){
+    makeActive(type, title){
       this.activeType = type
+      this.title = title
     }
   }
 }
