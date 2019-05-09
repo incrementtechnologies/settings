@@ -3,7 +3,7 @@
     <span class="header">
       Payment Accounts
       <button class="btn btn-primary pull-right hide" @click="activateNewPayment()"> New Payment Method</button>
-      <i class="fa fa-plus pull-right" @click="activateNewPayment()" style="line-height: 50px;"></i>
+      <i class="fa fa-plus pull-right hide-on-desktop" @click="activateNewPayment()" style="line-height: 50px;"></i>
     </span>
     <span class="account-item" v-if="data !== null" v-for="item, index in data">
       <label v-if="item.stripe !== null">
@@ -191,6 +191,9 @@
   line-height: 1.25;
 }
 
+.hide-on-desktop{
+  display: none;
+}
 
 @media screen and (max-width: 992px){
   .holder{
@@ -205,6 +208,9 @@
   }
   .hide{
     display: none;
+  }
+  .hide-on-desktop{
+    display: block;
   }
 }
 </style>
