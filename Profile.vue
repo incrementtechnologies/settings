@@ -210,6 +210,9 @@ export default {
     showImages(){
       $('#browseImagesModal').modal('show')
     },
+    hideImages(){
+      $('#browseImagesModal').modal('hide')
+    },
     manageImageUrl(url){
       if(this.user.profile !== null){
         this.user.profile.url = url

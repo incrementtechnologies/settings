@@ -23,6 +23,10 @@
       <billing-information v-if="activeType === 'billing_information'"></billing-information>
       <merchant v-if="activeType === 'merchant'"></merchant>
       <notification v-if="activeType === 'notification'"></notification>
+      <ed-background v-if="activeType === 'educations'"></ed-background>
+      <work-experience v-if="activeType === 'work-experience'"></work-experience>
+      <ids v-if="activeType === 'identifications'"></ids>
+      <guarantor v-if="activeType === 'guarantor'"></guarantor>
     </div>
   </div>
 
@@ -129,14 +133,7 @@ export default {
       user: AUTH.user,
       tokenData: AUTH.tokenData,
       config: CONFIG,
-      menu: [
-        {title: 'Profile', type: 'profile'},
-        {title: 'Account', type: 'account'},
-        {title: 'Payment Accounts', type: 'payment_method'},
-        {title: 'Billing Information', type: 'billing_information'},
-        {title: 'Merchant Setting', type: 'merchant'},
-        {title: 'Notifications', type: 'notification'}
-      ],
+      menu: CONFIG.settingsMenu,
       activeType: 'profile',
       parameter: this.$route.params.parameter,
       title: 'Show Menu'
@@ -148,7 +145,11 @@ export default {
     'payment': require('components/increment/settings/Payment.vue'),
     'billing-information': require('components/increment/settings/BillingInformation.vue'),
     'merchant': require('components/increment/settings/Merchant.vue'),
-    'notification': require('components/increment/settings/Notification.vue')
+    'notification': require('components/increment/settings/Notification.vue'),
+    'ed-background': require('modules/profile/CreateEducationalBackground.vue'),
+    'work-experience': require('modules/profile/CreateWorkExperience.vue'),
+    'ids': require('modules/profile/CreateId.vue'),
+    'guarantor': require('modules/profile/CreateGuarantor.vue')
   },
   methods: {
     redirect(path){
