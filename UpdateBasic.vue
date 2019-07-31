@@ -27,7 +27,8 @@
   </div>
 
 </template>
-<style scoped>
+<style scoped lang="scss">
+@import "~assets/style/colors.scss";
 .update-holder{
   width: 100%;
   float: left;
@@ -65,10 +66,10 @@
 }
 .item:hover{
   cursor: pointer;
-  border-left: solid 2px #22b173 !important;
+  border-left: solid 2px $primary !important;
 }
 .make-active{
-  border-left: solid 2px #22b173 !important;
+  border-left: solid 2px $primary !important;
 }
 .content{
   width: 75%;
@@ -96,8 +97,8 @@
     display: block;
   }
   .btn-primary.active, .btn-primary:active, .show>.btn-primary.dropdown-toggle{
-    background: #028170;
-    border-color: #028170;
+    background: $primary;
+    border-color: $primary;
   }
 }
 </style>
