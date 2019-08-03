@@ -13,11 +13,11 @@
       <tbody>
         <tr v-for="(item, index) in data" :key="index">
           <td>{{item.account.username}}</td>
-          <td>{{item.account.Email}}</td>
-          <td>{{item.account.status}}</td>
+          <td>{{item.account.email}}</td>
+          <td>{{item.status}}</td>
           <td>
-            <label class="text-primary">EDIT</label> / 
-            <label class="text-warning">DELETE</label>
+            <label class="text-primary actions">EDIT</label> / 
+            <label class="text-danger actions">DELETE</label>
           </td>
         </tr>
       </tbody>
@@ -32,6 +32,10 @@
   width: 96%;
   float: left;
   margin-left: 2%;
+}
+.actions:hover{
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
 <script>
