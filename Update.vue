@@ -136,7 +136,7 @@ export default {
       config: CONFIG,
       menu: CONFIG.settingsMenu,
       activeType: 'profile',
-      parameter: this.$route.params.parameter,
+      parameter: this.$route.params.parameter ? this.$route.params.parameter : null,
       title: 'Show Menu'
     }
   },
