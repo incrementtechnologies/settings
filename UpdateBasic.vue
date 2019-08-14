@@ -21,7 +21,7 @@
       <account v-if="activeType === 'account'"></account>
       <payment v-if="activeType === 'payment_method'"></payment>
       <billing-information v-if="activeType === 'billing_information'"></billing-information>
-      <merchant v-if="activeType === 'merchant'"></merchant>
+      <merchant v-if="activeType === 'merchant'" :title="title"></merchant>
       <notification v-if="activeType === 'notification'"></notification>
     </div>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="merchant-holder" v-if="data !== null">
-    <span class="header">Merchant Settings</span>
+    <span class="header">{{title}}</span>
     <span class="content">
       <span class="error text-danger" v-if="errorMessage !== null">
         <b>Oops!</b> {{errorMessage}}
@@ -166,6 +166,7 @@ export default {
       }
     }
   },
+  props: ['title'],
   components: {
     'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
   },

@@ -5,6 +5,9 @@
       <span class="error text-danger" v-if="errorMessageEmail !== null">
         <b>Oops!</b> {{errorMessageEmail}}
       </span>
+      <span class="error text-success" v-if="successMessage !== null">
+        {{successMessage}}
+      </span>
       <span class="inputs">
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Username</label>
@@ -24,6 +27,9 @@
     <span class="content">
       <span class="error text-danger" v-if="errorMessage !== null">
         <b>Oops!</b> {{errorMessage}}
+      </span>
+      <span class="error text-success" v-if="successMessagePassword !== null">
+        {{successMessagePassword}}
       </span>
       <span class="inputs">
         <div class="form-group" style="margin-top: 25px;">
@@ -140,11 +146,15 @@ export default {
       newCPassword: null,
       errorMessage: null,
       errorMessageEmail: null,
+      successMessage: null,
+      successMessagePassword: null,
       email: null
     }
   },
   methods: {
     updatePassword(){
+      this.successMessagePassword = null
+      this.successMessage = null
       if(this.newPassword === null || this.newPassword === ''){
         this.errorMessage = 'Please fill up all the required fields.'
       }else if(this.newPassword.length < 6){
@@ -160,27 +170,24 @@ export default {
         this.APIRequest('accounts/update_password', parameter).then(response => {
           if(response.data === true){
             AUTH.checkAuthentication(null)
+            this.successMessagePassword = 'Successfully updated!'
           }
         })
       }
     },
     updateEmail(){
+      this.successMessagePassword = null
+      this.successMessage = null
       if(this.email !== null || this.email !== ''){
         let parameter = {
           'id': this.user.userID,
-          'email': this.email,
-          'host': this.config.WEBHOST,
-          'api': this.config.BACKEND_URL,
-          'app': this.config.WEB_APP,
-          'host_email': this.config.HOST_EMAIL,
-          'app_title': this.config.WEBSITE_TITLE,
-          'web': this.config.WEBSITE,
-          'browser': this.config.BROWSER
+          'email': this.email
         }
         this.APIRequest('accounts/update_email', parameter).then(response => {
           if(response.data === true){
             this.errorMessageEmail = null
             AUTH.checkAuthentication(null)
+            this.successMessage = 'Successfully updated!'
           }else{
             this.errorMessageEmail = response.error
           }
