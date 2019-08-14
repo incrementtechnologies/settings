@@ -203,7 +203,7 @@ export default {
     },
     validate(){
       let i = this.data
-      if(i.first_name !== null && i.last_name !== null && i.sex !== null){
+      if(i.first_name !== null && i.last_name !== null){
         return true
       }
       return false
