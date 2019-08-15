@@ -5,7 +5,7 @@
         {{!title ? 'Show Menu' : title}}
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <span class="dropdown-item" v-for="item, index in menu" @click="makeActive(item)">{{item.title}}</span>
+        <span class="dropdown-item" v-for="item, index in menu" @click="makeActive(item)" v-if="item.type !== 'merchant' && (user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN'))">{{item.title}}</span>
       </div>
     </div>
     <div class="sidebar">

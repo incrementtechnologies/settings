@@ -46,6 +46,22 @@
       <span class="sidebar">
       </span>
     </span>
+    <div v-if="user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN')">
+      <span class="header">Change your Account Type</span>
+      <span class="content">
+        <span class="error text-danger" v-if="errorMessage !== null">
+          <b>Oops!</b> {{errorMessage}}
+        </span>
+        <span class="error text-success" v-if="successMessagePassword !== null">
+          {{successMessagePassword}}
+        </span>
+        <span class="inputs">
+          <span class="options" v-if="config.USER_TYPE.length === 3">
+            <button v-bind:class="{'btn-primary': user.type === item.title}" class="btn btn-default" @click="updateType(item)" v-bind:style="{width: (parseInt(100 / config.USER_TYPE.length) - 1) + '%'}" v-for="(item, index) in config.USER_TYPE">{{item.title}}</button>
+          </span>
+        </span>
+      </span>
+    </div>
   </div>
 </template>
 <style scoped>
@@ -114,6 +130,17 @@
 .custom-block input{
   display: none;
 }
+.options{
+  width: 100%;
+  float: left;
+  margin-top: 25px;
+}
+.options button{
+  float: left !important;
+  height: 60px !important;
+  margin-right: 1%;
+  margin-left: 0%;
+}
 @media screen and (max-width: 992px){
   .holder{
     width: 96%;
@@ -124,6 +151,12 @@
     width: 100%;
     margin-right: 0%;
     margin-left: 0%;
+  }
+  .options button{
+    width: 48% !important;
+    margin-right: 1%;
+    margin-left: 1%;
+    margin-bottom: 10px;
   }
 }
 </style>
@@ -174,6 +207,19 @@ export default {
           }
         })
       }
+    },
+    updateType(item){
+      let parameter = {
+        id: this.user.userID,
+        account_type: item.title
+      }
+      $('#loading').css({display: 'block'})
+      this.APIRequest('accounts/update_type', parameter).then(response => {
+        $('#loading').css({display: 'none'})
+        if(response.data === true){
+          AUTH.checkAuthentication(null)
+        }
+      })
     },
     updateEmail(){
       this.successMessagePassword = null
