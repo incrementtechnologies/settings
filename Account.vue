@@ -5,6 +5,9 @@
       <span class="error text-danger" v-if="errorMessageEmail !== null">
         <b>Oops!</b> {{errorMessageEmail}}
       </span>
+      <span class="error text-success" v-if="successMessage !== null">
+        {{successMessage}}
+      </span>
       <span class="inputs">
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Username</label>
@@ -25,6 +28,9 @@
       <span class="error text-danger" v-if="errorMessage !== null">
         <b>Oops!</b> {{errorMessage}}
       </span>
+      <span class="error text-success" v-if="successMessagePassword !== null">
+        {{successMessagePassword}}
+      </span>
       <span class="inputs">
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">New Password</label>
@@ -40,6 +46,22 @@
       <span class="sidebar">
       </span>
     </span>
+    <div v-if="user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN')">
+      <span class="header">Change your Account Type</span>
+      <span class="content">
+        <span class="error text-danger" v-if="errorMessage !== null">
+          <b>Oops!</b> {{errorMessage}}
+        </span>
+        <span class="error text-success" v-if="successMessagePassword !== null">
+          {{successMessagePassword}}
+        </span>
+        <span class="inputs">
+          <span class="options" v-if="config.USER_TYPE.length === 3">
+            <button v-bind:class="{'btn-primary': user.type === item.title}" class="btn btn-default" @click="updateType(item)" v-bind:style="{width: (parseInt(100 / config.USER_TYPE.length) - 1) + '%'}" v-for="(item, index) in config.USER_TYPE">{{item.title}}</button>
+          </span>
+        </span>
+      </span>
+    </div>
   </div>
 </template>
 <style scoped>
@@ -108,6 +130,17 @@
 .custom-block input{
   display: none;
 }
+.options{
+  width: 100%;
+  float: left;
+  margin-top: 25px;
+}
+.options button{
+  float: left !important;
+  height: 60px !important;
+  margin-right: 1%;
+  margin-left: 0%;
+}
 @media screen and (max-width: 992px){
   .holder{
     width: 96%;
@@ -118,6 +151,12 @@
     width: 100%;
     margin-right: 0%;
     margin-left: 0%;
+  }
+  .options button{
+    width: 48% !important;
+    margin-right: 1%;
+    margin-left: 1%;
+    margin-bottom: 10px;
   }
 }
 </style>
@@ -140,11 +179,15 @@ export default {
       newCPassword: null,
       errorMessage: null,
       errorMessageEmail: null,
+      successMessage: null,
+      successMessagePassword: null,
       email: null
     }
   },
   methods: {
     updatePassword(){
+      this.successMessagePassword = null
+      this.successMessage = null
       if(this.newPassword === null || this.newPassword === ''){
         this.errorMessage = 'Please fill up all the required fields.'
       }else if(this.newPassword.length < 6){
@@ -160,27 +203,37 @@ export default {
         this.APIRequest('accounts/update_password', parameter).then(response => {
           if(response.data === true){
             AUTH.checkAuthentication(null)
+            this.successMessagePassword = 'Successfully updated!'
           }
         })
       }
     },
+    updateType(item){
+      let parameter = {
+        id: this.user.userID,
+        account_type: item.title
+      }
+      $('#loading').css({display: 'block'})
+      this.APIRequest('accounts/update_type', parameter).then(response => {
+        $('#loading').css({display: 'none'})
+        if(response.data === true){
+          AUTH.checkAuthentication(null)
+        }
+      })
+    },
     updateEmail(){
+      this.successMessagePassword = null
+      this.successMessage = null
       if(this.email !== null || this.email !== ''){
         let parameter = {
           'id': this.user.userID,
-          'email': this.email,
-          'host': this.config.WEBHOST,
-          'api': this.config.BACKEND_URL,
-          'app': this.config.WEB_APP,
-          'host_email': this.config.HOST_EMAIL,
-          'app_title': this.config.WEBSITE_TITLE,
-          'web': this.config.WEBSITE,
-          'browser': this.config.BROWSER
+          'email': this.email
         }
         this.APIRequest('accounts/update_email', parameter).then(response => {
           if(response.data === true){
             this.errorMessageEmail = null
             AUTH.checkAuthentication(null)
+            this.successMessage = 'Successfully updated!'
           }else{
             this.errorMessageEmail = response.error
           }

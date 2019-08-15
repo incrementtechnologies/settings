@@ -18,7 +18,7 @@
           <input type="text" class="form-control" placeholder="Enter Last Name" v-model="data.last_name">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="allowed.indexOf('sex') > -1">
           <label for="address">Gender</label>
           <select class="form-control" v-model="data.sex">
             <option value="male">Male</option>
@@ -26,17 +26,17 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="allowed.indexOf('cellular_number') > -1">
           <label for="address">Cellular Numbar</label>
           <input type="text" class="form-control" placeholder="Optional" v-model="data.cellular_number">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="allowed.indexOf('address') > -1">
           <label for="address">Address</label>
           <input type="text" class="form-control" placeholder="Optional" v-model="data.address">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="allowed.indexOf('birth_date') > -1">
           <label for="address">Birthdate</label>
           <input type="date" class="form-control" v-model="data.birth_date" placeholder="Optional">
         </div>
@@ -154,6 +154,7 @@ export default {
       }
     }
   },
+  props: ['allowed'],
   components: {
     'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
   },
@@ -202,7 +203,7 @@ export default {
     },
     validate(){
       let i = this.data
-      if(i.first_name !== null && i.last_name !== null && i.sex !== null){
+      if(i.first_name !== null && i.last_name !== null){
         return true
       }
       return false
