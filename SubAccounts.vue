@@ -1,6 +1,6 @@
 <template>
   <div class="holder">
-    <button class="btn btn-primary pull-right" style="margin-bottom: 10px;" @click="showModal()">Add Account</button>
+    <button class="btn btn-primary pull-right" style="margin-bottom: 10px;" @click="showModal('create')">Add Account</button>
     <table class="table table-bordered" v-if="data !== null">
       <thead>
         <tr>
@@ -16,8 +16,8 @@
           <td>{{item.account.email}}</td>
           <td>{{item.status}}</td>
           <td>
-            <label class="text-primary actions">EDIT</label> / 
-            <label class="text-danger actions">DELETE</label>
+            <label class="text-primary actions" @click="showModal('update', item)">EDIT</label> / 
+            <label class="text-danger actions" @click="remove(item.id, item.account.id)">DELETE</label>
           </td>
         </tr>
       </tbody>
@@ -61,7 +61,7 @@ export default {
     'create-modal': require('components/increment/generic/modal/Modal.vue')
   },
   methods: {
-    retrieve(){
+    retrieve(sort = null){
       let parameter = {
         condition: [{
           value: this.user.userID,
@@ -77,8 +77,93 @@ export default {
         }
       })
     },
-    showModal(){
+    showModal(action, item = null){
+      switch(action){
+        case 'create':
+          this.createSubAccountModal = {...SubAccount}
+          let inputs = this.createSubAccountModal.inputs
+          inputs.map(input => {
+            if(input.variable !== 'status'){
+              input.value = null
+            }else{
+              input.value = 'Normal'
+            }
+            input.disabled = false
+          })
+          this.createSubAccountModal.params = [{
+            variable: 'account_id',
+            value: AUTH.user.userID
+          }, {
+            variable: 'referral_code',
+            value: null
+          }, {
+            variable: 'account_id',
+            value: AUTH.user.userID
+          }, {
+            variable: 'account_type',
+            value: AUTH.user.type
+          }, {
+            variable: 'config',
+            value: CONFIG
+          }]
+          break
+        case 'update':
+          let modalData = {...this.createSubAccountModal}
+          let parameter = {
+            title: 'Update Sub Account',
+            route: 'sub_accounts/update',
+            button: {
+              left: 'Cancel',
+              right: 'Update'
+            },
+            sort: {
+              column: 'created_at',
+              value: 'desc'
+            },
+            params: [{
+              variable: 'id',
+              value: item.id
+            }, {
+              variable: 'account_id',
+              value: item.member
+            }]
+          }
+          modalData = {...modalData, ...parameter} // updated data without input values
+          let selectedData = item
+          modalData.inputs.map(data => {
+            if(data.variable === 'status'){
+              data.value = item.status
+            }
+            if(data.variable === 'username'){
+              data.value = item.account.username
+              data.disabled = true
+            }
+            if(data.variable === 'email'){
+              data.value = item.account.email
+              data.disabled = true
+            }
+            if(data.variable === 'password'){
+              data.value = '*****'
+              data.disabled = true
+            }
+          })
+          this.createSubAccountModal = {...modalData}
+          break
+      }
       $('#createSubAccountModal').modal('show')
+    },
+    remove(subId, accountId){
+      let parameter = {
+        id: subId
+      }
+      this.APIRequest('sub_accounts/delete', parameter).then(response => {
+        let parameterAccount = {
+          id: accountId
+        }
+        this.APIRequest('accounts/delete', parameterAccount).then(response => {
+          this.retrieve()
+        })
+      })
     }
   }
 }
