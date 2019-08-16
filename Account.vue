@@ -47,7 +47,7 @@
       </span>
     </span>
     <div v-if="user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN')">
-      <span class="header">Change your Account Type</span>
+      <span class="header">Account Type</span>
       <span class="content">
         <span class="error text-danger" v-if="errorMessage !== null">
           <b>Oops!</b> {{errorMessage}}
@@ -56,8 +56,11 @@
           {{successMessagePassword}}
         </span>
         <span class="inputs">
-          <span class="options" v-if="config.USER_TYPE.length === 3">
+          <span class="options" v-if="user.subAccount === null || (user.subAccount !== null && user.subAccount.set_types === null)">
             <button v-bind:class="{'btn-primary': user.type === item.title}" class="btn btn-default" @click="updateType(item)" v-bind:style="{width: (parseInt(100 / config.USER_TYPE.length) - 1) + '%'}" v-for="(item, index) in config.USER_TYPE">{{item.title}}</button>
+          </span>
+          <span class="options" v-else>
+            <button class="btn btn-default btn-primary" v-bind:style="{width: (parseInt(100 / config.USER_TYPE.length) - 1) + '%'}">{{user.type}}</button>
           </span>
         </span>
       </span>
