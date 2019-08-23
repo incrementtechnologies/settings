@@ -43,7 +43,7 @@ import ROUTER from 'src/router'
 import AUTH from 'src/services/auth'
 import axios from 'axios'
 import CONFIG from 'src/config.js'
-import SubAccount from 'src/modules/modal/CreateSubAccount.js'
+import SubAccount from './CreateSubAccount.js'
 export default {
   mounted(){
     this.retrieve()
