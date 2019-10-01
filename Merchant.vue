@@ -9,17 +9,25 @@
         {{successMessage}}
       </span>
       <span class="inputs">
+
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Business Name <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business Name" v-model="data.name">
         </div>
+
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Business Address <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business Address" v-model="data.address">
         </div>
-        <div class="form-group" style="margin-top: 25px;">
+
+        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
           <label for="address">Prefix <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix">
+        </div>
+
+        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
+          <label for="address">Website <label class="text-danger">*</label></label>
+          <input type="text" class="form-control" placeholder="Company website url" v-model="data.website">
         </div>
         
         <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()">Update</button>
@@ -137,10 +145,10 @@
 }
 </style>
 <script>
-import ROUTER from '../../../router'
-import AUTH from '../../../services/auth'
+import ROUTER from 'src/router'
+import AUTH from 'src/services/auth'
 import axios from 'axios'
-import CONFIG from '../../../config.js'
+import CONFIG from 'src/config.js'
 export default {
   mounted(){
     this.retrieve()
@@ -158,7 +166,8 @@ export default {
         prefix: null,
         logo: null,
         address: null,
-        name: null
+        name: null,
+        website: null
       },
       createFlag: false,
       photoObject: {
@@ -166,7 +175,7 @@ export default {
       }
     }
   },
-  props: ['title'],
+  props: ['title', 'allowed'],
   components: {
     'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
   },

@@ -21,7 +21,7 @@
       <account v-if="activeType === 'account'"></account>
       <payment v-if="activeType === 'payment_method'"></payment>
       <billing-information v-if="activeType === 'billing_information'"></billing-information>
-      <merchant v-if="activeType === 'merchant'" :title="title"></merchant>
+      <merchant v-if="activeType === 'merchant'" :title="title" :allowed="allowed"></merchant>
       <notification v-if="activeType === 'notification'"></notification>
     </div>
   </div>
@@ -103,10 +103,11 @@
 }
 </style>
 <script>
-import ROUTER from '../../../router'
-import AUTH from '../../../services/auth'
+import ROUTER from 'src/router'
+import AUTH from 'src/services/auth'
 import axios from 'axios'
-import CONFIG from '../../../config.js'
+import CONFIG from 'src/config.js'
+import COMMON from 'src/common.js'
 export default {
   mounted(){
     if(this.parameter !== null){
@@ -129,7 +130,7 @@ export default {
       user: AUTH.user,
       tokenData: AUTH.tokenData,
       config: CONFIG,
-      menu: CONFIG.settingsMenu,
+      menu: COMMON.settingsMenu,
       activeType: 'profile',
       parameter: this.$route.params.parameter,
       title: 'Show Menu',
@@ -149,9 +150,7 @@ export default {
       ROUTER.push(path)
     },
     makeActive(params){
-      if(params.type === 'profile'){
-        this.allowed = params.allowed
-      }
+      this.allowed = params.allowed
       this.activeType = params.type
       this.title = params.title
     }

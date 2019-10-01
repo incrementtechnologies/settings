@@ -62,6 +62,7 @@ export default {
   },
   methods: {
     retrieve(sort = null){
+      $('#loading').css({display: 'block'})
       let parameter = {
         condition: [{
           value: this.user.userID,
@@ -70,6 +71,7 @@ export default {
         }]
       }
       this.APIRequest('sub_accounts/retrieve', parameter).then(response => {
+        $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data
         }else{
@@ -156,11 +158,13 @@ export default {
       let parameter = {
         id: subId
       }
+      $('#loading').css({display: 'block'})
       this.APIRequest('sub_accounts/delete', parameter).then(response => {
         let parameterAccount = {
           id: accountId
         }
         this.APIRequest('accounts/delete', parameterAccount).then(response => {
+          $('#loading').css({display: 'none'})
           this.retrieve()
         })
       })
