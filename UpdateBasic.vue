@@ -5,23 +5,23 @@
         {{!title ? 'Show Menu' : title}}
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <span class="dropdown-item" v-for="item, index in menu" @click="makeActive(item.type, item.title)">{{item.title}}</span>
+        <span class="dropdown-item" v-for="item, index in menu" @click="makeActive(item)" v-if="item.type !== 'merchant' && (user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN'))">{{item.title}}</span>
       </div>
     </div>
     <div class="sidebar">
       <span class="header">
         Personal Settings
       </span>
-      <span class="item" v-bind:class="{'make-active': item.type === activeType}" v-for="item, index in menu" v-if="menu !== null" @click="makeActive(item.type, item.title)">
+      <span class="item" v-bind:class="{'make-active': item.type === activeType}" v-for="item, index in menu" v-if="item.type !== 'merchant' || (user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN'))" @click="makeActive(item)">
         {{item.title}}
       </span>
     </div>
     <div class="content">
-      <profile v-if="activeType === 'profile'"></profile>
+      <profile v-if="activeType === 'profile'" :allowed="allowed"></profile>
       <account v-if="activeType === 'account'"></account>
       <payment v-if="activeType === 'payment_method'"></payment>
       <billing-information v-if="activeType === 'billing_information'"></billing-information>
-      <merchant v-if="activeType === 'merchant'"></merchant>
+      <merchant v-if="activeType === 'merchant'" :title="title" :allowed="allowed"></merchant>
       <notification v-if="activeType === 'notification'"></notification>
     </div>
   </div>
@@ -103,26 +103,26 @@
 }
 </style>
 <script>
-import ROUTER from '../../../router'
-import AUTH from '../../../services/auth'
+import ROUTER from 'src/router'
+import AUTH from 'src/services/auth'
 import axios from 'axios'
-import CONFIG from '../../../config.js'
+import CONFIG from 'src/config.js'
+import COMMON from 'src/common.js'
 export default {
   mounted(){
-    AUTH.checkPlan()
     if(this.parameter !== null){
       let flag = false
       for (var i = 0; i < this.menu.length; i++) {
         if(this.parameter === this.menu[i].type){
           flag = true
-          this.makeActive(this.menu[i].type)
+          this.makeActive(this.menu[i])
         }
       }
       if(flag === false){
-        this.makeActive('profile')
+        this.makeActive(this.menu[0])
       }
     }else{
-      this.makeActive('profile')
+      this.makeActive(this.menu[0])
     }
   },
   data(){
@@ -130,10 +130,11 @@ export default {
       user: AUTH.user,
       tokenData: AUTH.tokenData,
       config: CONFIG,
-      menu: CONFIG.settingsMenu,
+      menu: COMMON.settingsMenu,
       activeType: 'profile',
       parameter: this.$route.params.parameter,
-      title: 'Show Menu'
+      title: 'Show Menu',
+      allowed: []
     }
   },
   components: {
@@ -148,9 +149,10 @@ export default {
     redirect(path){
       ROUTER.push(path)
     },
-    makeActive(type, title){
-      this.activeType = type
-      this.title = title
+    makeActive(params){
+      this.allowed = params.allowed
+      this.activeType = params.type
+      this.title = params.title
     }
   }
 }
