@@ -114,10 +114,10 @@ import CONFIG from '../../../config.js'
 export default {
   mounted(){
     AUTH.checkPlan()
-    if(this.parameter !== null){
+    if(this.$route.params.parameter){
       let flag = false
       for (var i = 0; i < this.menu.length; i++) {
-        if(this.parameter === this.menu[i].type){
+        if(this.$route.params.parameter === this.menu[i].type){
           flag = true
           this.makeActive(this.menu[i].type)
         }
