@@ -107,10 +107,11 @@
 }
 </style>
 <script>
-import ROUTER from '../../../router'
-import AUTH from '../../../services/auth'
+import ROUTER from 'src/router'
+import AUTH from 'src/services/auth'
 import axios from 'axios'
-import CONFIG from '../../../config.js'
+import CONFIG from 'src/config.js'
+import COMMON from 'src/common.js'
 export default {
   mounted(){
     AUTH.checkPlan()
@@ -134,7 +135,7 @@ export default {
       user: AUTH.user,
       tokenData: AUTH.tokenData,
       config: CONFIG,
-      menu: CONFIG.settingsMenu,
+      menu: COMMON.settingsMenu,
       activeType: 'profile',
       parameter: this.$route.params.parameter ? this.$route.params.parameter : null,
       title: 'Show Menu',
