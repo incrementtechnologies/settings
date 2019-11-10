@@ -140,6 +140,7 @@ import axios from 'axios'
 import CONFIG from 'src/config.js'
 export default {
   mounted(){
+    $('#loading').css({'display': 'block'})
     this.retrieve()
   },
   data(){
@@ -168,6 +169,7 @@ export default {
         }]
       }
       this.APIRequest('account_informations/retrieve', parameter).then(response => {
+        $('#loading').css({'display': 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
         }else{
@@ -177,6 +179,7 @@ export default {
     },
     update(){
       if(this.validate()){
+        $('#loading').css({'display': 'block'})
         this.APIRequest('account_informations/update', this.data).then(response => {
           if(response.data === true){
             this.retrieve()
@@ -185,6 +188,7 @@ export default {
       }
     },
     updatePhoto(object){
+      $('#loading').css({'display': 'block'})
       this.APIRequest('account_profiles/update', object).then(response => {
         if(response.data === true){
           this.hideImages()
