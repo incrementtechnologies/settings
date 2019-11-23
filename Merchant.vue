@@ -151,6 +151,7 @@ import axios from 'axios'
 import CONFIG from 'src/config.js'
 export default {
   mounted(){
+    $('#loading').css({display: 'block'})
     this.retrieve()
   },
   data(){
@@ -189,6 +190,7 @@ export default {
         }]
       }
       this.APIRequest('merchants/retrieve', parameter).then(response => {
+        $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
           this.createFlag = false
@@ -201,6 +203,7 @@ export default {
     update(url){
       if(this.createFlag === false){
         this.data.logo = url
+        $('#loading').css({display: 'block'})
         this.APIRequest('merchants/update', this.data).then(response => {
           if(response.data === true){
             this.retrieve()

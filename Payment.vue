@@ -226,6 +226,7 @@ import CardNumber from '../../../components/stripe/CardNumber'
 import { Stripe } from '../../../components/stripe/stripeElements'
 export default {
   mounted(){
+    $('#loading').css({display: 'block'})
     this.retrieve()
   },
   data(){
@@ -282,6 +283,7 @@ export default {
         account_id: this.user.userID
       }
       this.APIRequest('payment_methods/retrieve', parameter).then(response => {
+        $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data
           this.newPaymentFlag = false
@@ -295,6 +297,7 @@ export default {
       let parameter = {
         id: id
       }
+      $('#loading').css({display: 'block'})
       this.APIRequest('payment_methods/delete', parameter).then(response => {
         this.retrieve()
       })
@@ -304,6 +307,7 @@ export default {
         id: id,
         account_id: this.user.userID
       }
+      $('#loading').css({display: 'block'})
       this.APIRequest('payment_methods/update', parameter).then(response => {
         this.retrieve()
       })

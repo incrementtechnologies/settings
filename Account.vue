@@ -164,10 +164,10 @@
 }
 </style>
 <script>
-import ROUTER from '../../../router'
-import AUTH from '../../../services/auth'
+import ROUTER from 'src/router'
+import AUTH from 'src/services/auth'
 import axios from 'axios'
-import CONFIG from '../../../config.js'
+import CONFIG from 'src/config.js'
 export default {
   mounted(){
     this.email = this.user.email
@@ -203,7 +203,9 @@ export default {
           id: this.user.userID,
           password: this.newPassword
         }
+        $('#loading').css({display: 'block'})
         this.APIRequest('accounts/update_password', parameter).then(response => {
+          $('#loading').css({display: 'none'})
           if(response.data === true){
             AUTH.checkAuthentication(null)
             this.successMessagePassword = 'Successfully updated!'
@@ -232,7 +234,9 @@ export default {
           'id': this.user.userID,
           'email': this.email
         }
+        $('#loading').css({'display': 'block'})
         this.APIRequest('accounts/update_email', parameter).then(response => {
+          $('#loading').css({display: 'none'})
           if(response.data === true){
             this.errorMessageEmail = null
             AUTH.checkAuthentication(null)
