@@ -4,41 +4,42 @@
     <span class="content">
       <span class="inputs" v-if="data !== null">
         <div class="form-group" style="margin-top: 25px;">
-          <label for="address">First Name</label>
+          <label for="address">First Name <b class="text-danger">*</b></label>
           <input type="text" class="form-control" placeholder="Enter First Name" v-model="data.first_name">
         </div>
 
         <div class="form-group">
-          <label for="address">Middle Name</label>
-          <input type="text" class="form-control" placeholder="Optional" v-model="data.middle_name">
+          <label for="address">Middle Name <b class="text-danger">*</b></label>
+          <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="data.middle_name">
         </div>
 
         <div class="form-group">
-          <label for="address">Last Name</label>
+          <label for="address">Last Name <b class="text-danger">*</b></label>
           <input type="text" class="form-control" placeholder="Enter Last Name" v-model="data.last_name">
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('sex') > -1">
-          <label for="address">Gender</label>
+          <label for="address">Gender <b class="text-danger">*</b></label>
           <select class="form-control" v-model="data.sex">
             <option value="male">Male</option>
             <option value="female">Female</option>
+            <option value="others">Others</option>
           </select>
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('cellular_number') > -1">
-          <label for="address">Cellular Numbar</label>
-          <input type="text" class="form-control" placeholder="Optional" v-model="data.cellular_number">
+          <label for="address">Cellular Numbar <b class="text-danger">*</b></label>
+          <input type="text" class="form-control" placeholder="Enter Cellular Number" v-model="data.cellular_number">
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('address') > -1">
-          <label for="address">Address</label>
-          <input type="text" class="form-control" placeholder="Optional" v-model="data.address">
+          <label for="address">Address <b class="text-danger">*</b></label>
+          <input type="text" class="form-control" placeholder="Enter Address" v-model="data.address">
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('birth_date') > -1">
-          <label for="address">Birthdate</label>
-          <input type="date" class="form-control" v-model="data.birth_date" placeholder="Optional">
+          <label for="address">Birthdate <b class="text-danger">*</b></label>
+          <input type="date" class="form-control" v-model="data.birth_date" placeholder="Select your birthdate">
         </div>
 
         <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()">Update</button>
