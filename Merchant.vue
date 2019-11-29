@@ -225,6 +225,7 @@ export default {
           this.retrieve()
           this.successMessage = 'Successfully Updated!'
           this.errorMessage = null
+          AUTH.checkAuthentication(null)
         }else{
           this.successMessage = null
           this.errorMessage = 'Unable to Update! Please contact the administrator.'
