@@ -155,6 +155,7 @@ import CONFIG from '../../../config.js'
 import EasyCountriesList from 'easy-countries-list'
 export default {
   mounted(){
+    $('#loading').css({display: 'block'})
     this.retrieve()
   },
   data(){
@@ -179,6 +180,7 @@ export default {
         }]
       }
       this.APIRequest('billing_informations/retrieve', parameter).then(response => {
+        $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
         }
@@ -193,6 +195,7 @@ export default {
     },
     update(){
       if(this.validate()){
+        $('#loading').css({display: 'block'})
         this.APIRequest('billing_informations/update', this.data).then(response => {
           if(response.data === true){
             this.retrieve()
