@@ -27,7 +27,7 @@
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('cellular_number') > -1">
-          <label for="address">Cellular Numbar</label>
+          <label for="address">Cellular Number</label>
           <input type="text" class="form-control" placeholder="Optional" v-model="data.cellular_number">
         </div>
 
