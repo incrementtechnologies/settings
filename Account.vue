@@ -46,7 +46,7 @@
       <span class="sidebar">
       </span>
     </span>
-    <div v-if="user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN')">
+    <div v-if="(user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN')) && common.USER_TYPE_SETTING === true">
       <span class="header">Account Type</span>
       <span class="content">
         <span class="error text-danger" v-if="errorMessage !== null">
@@ -57,10 +57,10 @@
         </span>
         <span class="inputs">
           <span class="options" v-if="user.subAccount === null || (user.subAccount !== null && user.subAccount.set_types === null)">
-            <button v-bind:class="{'btn-primary': user.type === item.title}" class="btn btn-default" @click="updateType(item)" v-bind:style="{width: (parseInt(100 / config.USER_TYPE.length) - 1) + '%'}" v-for="(item, index) in config.USER_TYPE">{{item.title}}</button>
+            <button v-bind:class="{'btn-primary': user.type === item.title}" class="btn btn-default" @click="updateType(item)" v-bind:style="{width: (parseInt(100 / common.USER_TYPE.length) - 1) + '%'}" v-for="(item, index) in common.USER_TYPE">{{item.title}}</button>
           </span>
           <span class="options" v-else>
-            <button class="btn btn-default btn-primary" v-bind:style="{width: (parseInt(100 / config.USER_TYPE.length) - 1) + '%'}">{{user.type}}</button>
+            <button class="btn btn-default btn-primary" v-bind:style="{width: (parseInt(100 / common.USER_TYPE.length) - 1) + '%'}">{{user.type}}</button>
           </span>
         </span>
       </span>
@@ -168,6 +168,7 @@ import ROUTER from 'src/router'
 import AUTH from 'src/services/auth'
 import axios from 'axios'
 import CONFIG from 'src/config.js'
+import COMMON from 'src/common.js'
 export default {
   mounted(){
     this.email = this.user.email
@@ -184,7 +185,8 @@ export default {
       errorMessageEmail: null,
       successMessage: null,
       successMessagePassword: null,
-      email: null
+      email: null,
+      common: COMMON
     }
   },
   methods: {
