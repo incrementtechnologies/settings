@@ -84,6 +84,7 @@
 .dropdown{
   width: 100%;
   display: none;
+  z-index: -1;
 }
 .custom-block-btn{
   width: 100% !important;
