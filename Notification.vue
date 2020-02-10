@@ -90,12 +90,14 @@
 .item{
   width: 100%;
   float: left;
-  height: 50px;
+  min-height: 50px;
+  overflow-y: hidden;
 }
 .item .details{
   width: 80%;
   float: left;
-  height: 50px;
+  min-height: 50px;
+  overflow-y: hidden;
 }
 .details label{
   width: 100%;
@@ -103,8 +105,6 @@
 }
 .details .definition{
   color: #555;
-  font-size: 13px;
-  line-height: 13px;
 }
 .item .icon{
   width: 20%;
