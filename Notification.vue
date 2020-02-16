@@ -3,30 +3,17 @@
     <span class="header">Email</span>
     <span class="content">
       <span class="inputs">
-        <div class="item" style="margin-top: 25px;">
+        <div class="item" style="margin-top: 25px;" v-for="(item, index) in options" :key="index" v-if="common.notificationSeting[index].flag === true">
           <span class="details">
-            <label class="title">Login</label>
-            <label class="definition">Send me an email everytime there's a login with my account.</label>
+            <label class="title">{{item.title}}</label>
+            <label class="definition">{{item.description}}</label>
           </span>
           <span class="icon" v-if="data !== null">
-            <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data.email_login) === 1" @click="update(data.id, 'email_login', 0)"></i>
-            <i class="fa fa-toggle-off text-danger action-link" v-if="parseInt(data.email_login) === 0" @click="update(data.id, 'email_login', 1)"></i>
+            <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data[item.column]) === 1" @click="update(data.id, item.column, 0)"></i>
+            <i class="fa fa-toggle-off text-danger action-link" v-if="parseInt(data[item.column]) === 0" @click="update(data.id, item.column, 1)"></i>
           </span>
           <span class="icon" v-if="data === null">
-            <i class="fa fa-toggle-off text-danger action-link" @click="create('email_login')"></i>
-          </span>
-        </div>
-        <div class="item" style="margin-top: 25px;">
-          <span class="details">
-            <label class="title">One Time Password(OTP)</label>
-            <label class="definition">Enable OTP everytime there's a login with my account.</label>
-          </span>
-           <span class="icon" v-if="data !== null">
-            <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data.email_otp) === 1" @click="update(data.id, 'email_otp', 0)"></i>
-            <i class="fa fa-toggle-off text-danger action-link" v-if="parseInt(data.email_otp) === 0" @click="update(data.id, 'email_otp', 1)"></i>
-          </span>
-          <span class="icon" v-if="data === null">
-            <i class="fa fa-toggle-off text-danger action-link" @click="create('email_otp')"></i>
+            <i class="fa fa-toggle-off text-danger action-link" @click="create(item.item.column)"></i>
           </span>
         </div>
       </span>
@@ -130,10 +117,11 @@
 }
 </style>
 <script>
-import ROUTER from '../../../router'
-import AUTH from '../../../services/auth'
+import ROUTER from 'src/router'
+import AUTH from 'src/services/auth'
 import axios from 'axios'
-import CONFIG from '../../../config.js'
+import CONFIG from 'src/config.js'
+import COMMON from 'src/common.js'
 export default {
   mounted(){
     this.retrieve()
@@ -143,7 +131,21 @@ export default {
       user: AUTH.user,
       tokenData: AUTH.tokenData,
       config: CONFIG,
-      data: null
+      data: null,
+      options: [{
+        title: 'Login',
+        description: 'Send me an email everytime there\'s a login with my account.',
+        column: 'email_login'
+      }, {
+        title: 'One Time Password(OTP)',
+        description: 'Enable OTP everytime there\'s a login with my account.',
+        column: 'email_otp'
+      }, {
+        title: 'Account PIN',
+        description: 'Receive new PIN from email everytime there\'s a login with my account.',
+        column: 'email_pin'
+      }],
+      common: COMMON
     }
   },
   methods: {
@@ -170,6 +172,7 @@ export default {
         account_id: this.user.userID,
         email_login: (type === 'email_login') ? 1 : 0,
         email_otp: (type === 'email_otp') ? 1 : 0,
+        email_pin: (type === 'email_pin') ? 1 : 0,
         sms_login: (type === 'sms_login') ? 1 : 0,
         sms_otp: (type === 'sms_otp') ? 1 : 0
       }
@@ -189,6 +192,11 @@ export default {
         case 'email_otp': parameter = {
           id: id,
           email_otp: value
+        }
+          break
+        case 'email_pin': parameter = {
+          id: id,
+          email_pin: value
         }
           break
         case 'sms_login': parameter = {
