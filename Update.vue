@@ -1,5 +1,5 @@
 <template>
-  <div class="update-holder">
+  <div class="update-holder" v-if="tokenData.token !== null">
     <div class="dropdown">
       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{!title ? 'Show Menu' : title}}

@@ -61,7 +61,7 @@ export default {
     id: 'status',
     type: 'select_specified',
     options: [
-      {value: 'ADMIN', label: 'Admin'},
+      {value: 'SUB_ADMIN', label: 'Sub Admin'},
       {value: 'Normal', label: 'Normal'}
     ]
   }],

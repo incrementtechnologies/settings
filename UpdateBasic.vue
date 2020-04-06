@@ -1,5 +1,5 @@
 <template>
-  <div class="update-holder">
+  <div class="update-holder" v-if="tokenData.token !== null">
     <div class="dropdown">
       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{!title ? 'Show Menu' : title}}
@@ -12,7 +12,7 @@
       <span class="header">
         Personal Settings
       </span>
-      <span class="item" v-bind:class="{'make-active': item.type === activeType}" v-for="item, index in menu" v-if="item.type !== 'merchant' || (user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN'))" @click="makeActive(item)">
+      <span class="item" v-bind:class="{'make-active': item.type === activeType}" v-for="item, index in menu" @click="makeActive(item)">
         {{item.title}}
       </span>
     </div>

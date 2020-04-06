@@ -12,25 +12,25 @@
 
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Business Name <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Business Name" v-model="data.name">
+          <input type="text" class="form-control" placeholder="Business Name" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Business Address <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Business Address" v-model="data.address">
+          <input type="text" class="form-control" placeholder="Business Address" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
           <label for="address">Prefix <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix">
+          <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
           <label for="address">Website <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Company website url" v-model="data.website">
+          <input type="text" class="form-control" placeholder="Company website url" v-model="data.website" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
         
-        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()">Update</button>
+        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button>
       </span>
       <span class="sidebar" v-if="createFlag === false">
         <span class="sidebar-header" style="margin-top: 25px;">Business Logo</span>
@@ -44,7 +44,7 @@
           <label v-if="data.status === 'not_verified'" class="text-grey"><i>Not verified</i></label>
           <label v-if="data.status === 'verified'" class="text-primary"><i>Verified</i></label>
         </span>
-        <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()">Select from images
+        <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Select from images
         </button>
       </span>
     </span>
@@ -182,6 +182,11 @@ export default {
   },
   methods: {
     retrieve(){
+      if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
+        $('#loading').css({display: 'none'})
+        this.data = AUTH.user.subAccount.merchant
+        return
+      }
       let parameter = {
         condition: [{
           value: this.user.userID,

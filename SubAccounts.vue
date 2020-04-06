@@ -16,8 +16,9 @@
           <td>{{item.account.email}}</td>
           <td>{{item.status}}</td>
           <td>
-            <label class="text-primary actions" @click="showModal('update', item)">EDIT</label> / 
-            <label class="text-danger actions" @click="remove(item.id, item.account.id)">DELETE</label>
+            <label class="text-primary actions" @click="showModal('update', item)" v-if="user.userID !== item.account.id">EDIT</label> 
+            <b v-if="user.userID !== item.account.id">/</b> 
+            <label class="text-danger actions" @click="remove(item.id, item.account.id)" v-if="user.userID !== item.account.id">DELETE</label>
           </td>
         </tr>
       </tbody>
