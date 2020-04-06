@@ -16,7 +16,7 @@
             <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data[item.column]) === 1"></i>
           </span>
           <span class="icon" v-if="data === null && item.column !== 'email_pin'">
-            <i class="fa fa-toggle-off text-danger action-link" @click="create(item.item.column)"></i>
+            <i class="fa fa-toggle-off text-danger action-link" @click="create(item.column)"></i>
           </span>
         </div>
       </span>
