@@ -53,6 +53,9 @@
         <span class="image" v-else>
           <i class="fa fa-user-circle-o" ></i>
         </span>
+        <label class="remove-image text-danger" id="featured-image-remove" @click="removeImage(user.profile.id)" v-if="user.profile !== null">
+          <i class="fa fa-times"></i>
+        </label>
         <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()">Select from images
         </button>
       </span>
@@ -93,6 +96,7 @@
   float: left;
   min-height: 50px;
   overflow-y: hidden;
+  position: relative;
 }
 .sidebar-header{
   height: 40px;
@@ -121,6 +125,22 @@
 .custom-block input{
   display: none;
 }
+
+.remove-image{
+  position: absolute;
+}
+
+.remove-image:hover{
+  cursor: pointer;
+}
+
+#featured-image-remove{
+  top: 50px;
+  right: 5px;
+  z-index: 1000;
+  font-size: 24px;
+}
+
 @media screen and (max-width: 992px){
   .holder{
     width: 96%;
@@ -228,6 +248,16 @@ export default {
         this.newProfile.url = url
         this.createPhoto(this.newProfile)
       }
+    },
+    removeImage(id){
+      let parameter = {
+        id: id
+      }
+      $('#loading').css({'display': 'block'})
+      this.APIRequest('account_profiles/delete', parameter).then(response => {
+        $('#loading').css({'display': 'none'})
+        AUTH.checkAuthentication()
+      })
     }
   }
 }

@@ -5,8 +5,8 @@
       <span class="error text-danger" v-if="errorMessageEmail !== null">
         <b>Oops!</b> {{errorMessageEmail}}
       </span>
-      <span class="error text-success" v-if="successMessage !== null">
-        {{successMessage}}
+      <span class="error text-success" v-if="successMessageEmail !== null">
+        {{successMessageEmail}}
       </span>
       <span class="inputs">
         <div class="form-group" style="margin-top: 25px;">
@@ -16,17 +16,17 @@
 
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Email Address</label>
-          <input type="text" class="form-control" placeholder="Enter First Name" v-model="email">
+          <input type="text" class="form-control" placeholder="Enter First Name" v-model="email" :disabled="user.subAccount.status !== 'ADMIN'">
         </div>
-        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="updateEmail()">Update Email</button>
+        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="updateEmail()" v-if="user.subAccount.status === 'ADMIN'">Update Email</button>
       </span>
       <span class="sidebar">
       </span>
     </span>
     <span class="header">Change your password</span>
     <span class="content">
-      <span class="error text-danger" v-if="errorMessage !== null">
-        <b>Oops!</b> {{errorMessage}}
+      <span class="error text-danger" v-if="errorMessagePassword !== null">
+        <b>Oops!</b> {{errorMessagePassword}}
       </span>
       <span class="error text-success" v-if="successMessagePassword !== null">
         {{successMessagePassword}}
@@ -49,11 +49,11 @@
     <div v-if="(user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN')) && common.USER_TYPE_SETTING === true">
       <span class="header">Account Type</span>
       <span class="content">
-        <span class="error text-danger" v-if="errorMessage !== null">
-          <b>Oops!</b> {{errorMessage}}
+        <span class="error text-danger" v-if="errorMessageType !== null">
+          <b>Oops!</b> {{errorMessageType}}
         </span>
-        <span class="error text-success" v-if="successMessagePassword !== null">
-          {{successMessagePassword}}
+        <span class="error text-success" v-if="successMessageType !== null">
+          {{successMessageType}}
         </span>
         <span class="inputs">
           <span class="options" v-if="user.subAccount === null || (user.subAccount !== null && user.subAccount.set_types === null)">
@@ -181,26 +181,35 @@ export default {
       data: null,
       newPassword: null,
       newCPassword: null,
-      errorMessage: null,
+      errorMessagePassword: null,
       errorMessageEmail: null,
-      successMessage: null,
+      errorMessageType: null,
+      successMessageEmail: null,
       successMessagePassword: null,
+      successMessageType: null,
       email: null,
       common: COMMON
     }
   },
   methods: {
-    updatePassword(){
+    initMessages(){
+      this.successMessageEmail = null
       this.successMessagePassword = null
-      this.successMessage = null
+      this.successMessageType = null
+      this.errorMessageEmail = null
+      this.errorMessagePassword = null
+      this.errorMessageType = null
+    },
+    updatePassword(){
+      this.initMessages()
       if(this.newPassword === null || this.newPassword === ''){
-        this.errorMessage = 'Please fill up all the required fields.'
+        this.errorMessagePassword = 'Please fill up all the required fields.'
       }else if(this.newPassword.length < 6){
-        this.errorMessage = 'Password must not less than to 6 digit characters.'
+        this.errorMessagePassword = 'Password must not less than to 6 digit characters.'
       }else if(this.newPassword !== this.newCPassword){
-        this.errorMessage = 'Password did not matched.'
+        this.errorMessagePassword = 'Password did not matched.'
       }else{
-        this.errorMessage = null
+        this.errorMessagePassword = null
         let parameter = {
           id: this.user.userID,
           password: this.newPassword
@@ -216,6 +225,7 @@ export default {
       }
     },
     updateType(item){
+      this.initMessages()
       let parameter = {
         id: this.user.userID,
         account_type: item.title
@@ -225,12 +235,12 @@ export default {
         $('#loading').css({display: 'none'})
         if(response.data === true){
           AUTH.checkAuthentication(null)
+          this.successMessageType = 'Successfully updated!'
         }
       })
     },
     updateEmail(){
-      this.successMessagePassword = null
-      this.successMessage = null
+      this.initMessages()
       if(this.email !== null || this.email !== ''){
         let parameter = {
           'id': this.user.userID,
@@ -242,7 +252,7 @@ export default {
           if(response.data === true){
             this.errorMessageEmail = null
             AUTH.checkAuthentication(null)
-            this.successMessage = 'Successfully updated!'
+            this.successMessageEmail = 'Successfully updated!'
           }else{
             this.errorMessageEmail = response.error
           }
