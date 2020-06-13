@@ -21,7 +21,7 @@
       <account v-if="activeType === 'account'"></account>
       <payment v-if="activeType === 'payment_method'"></payment>
       <billing-information v-if="activeType === 'billing_information'"></billing-information>
-      <merchant v-if="activeType === 'merchant'"></merchant>
+      <merchant v-if="activeType === 'merchant'" :allowed="allowed" :title="title"></merchant>
       <notification v-if="activeType === 'notification'"></notification>
       <ed-background v-if="activeType === 'educations'"></ed-background>
       <work-experience v-if="activeType === 'work-experience'"></work-experience>
@@ -160,9 +160,7 @@ export default {
       ROUTER.push(path)
     },
     makeActive(params){
-      if(params.type === 'profile'){
-        this.allowed = params.allowed
-      }
+      this.allowed = params.allowed
       this.activeType = params.type
       this.title = params.title
     }
