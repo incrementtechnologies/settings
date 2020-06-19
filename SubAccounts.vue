@@ -1,7 +1,7 @@
 <template>
   <div class="holder">
     <button class="btn btn-primary pull-right" style="margin-bottom: 10px;" @click="showModal('create')">Add Account</button>
-    <table class="table table-bordered" v-if="data !== null">
+    <table class="table table-bordered table-responsive" v-if="data !== null">
       <thead>
         <tr>
           <td>Username</td>
