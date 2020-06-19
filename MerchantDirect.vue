@@ -10,26 +10,31 @@
       </span>
       <span class="inputs">
 
-        <div class="form-group" style="margin-top: 25px;">
-          <label for="address">Business Name <label class="text-danger">*</label></label>
+        <div class="form-group">
+          <label for="address">Business name <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business Name" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;">
-          <label for="address">Business Address <label class="text-danger">*</label></label>
+          <label for="address">Business email address<label class="text-danger">*</label></label>
+          <input type="text" class="form-control" placeholder="Business email address" v-model="data.email" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+        </div>
+
+        <div class="form-group" style="margin-top: 25px;">
+          <label for="address">Business address <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business Address" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
 <!--         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
-          <label for="address">Prefix <label class="text-danger">*</label></label>
+          <label for="address">Prefix</label>
           <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
-          <label for="address">Website <label class="text-danger">*</label></label>
+          <label for="address">Website</label>
           <input type="text" class="form-control" placeholder="Company website url" v-model="data.website" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
-        </div>
-         -->
+        </div> -->
+        
         <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button>
       </span>
       <span class="sidebar" v-if="createFlag === false">
@@ -166,6 +171,7 @@ export default {
         account_id: AUTH.user.userID,
         prefix: null,
         logo: null,
+        email: null,
         address: null,
         name: null,
         website: null
@@ -205,6 +211,10 @@ export default {
       })
     },
     update(url){
+      if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
+        this.errorMessage = 'Invalid email address.'
+        return
+      }
       if(this.createFlag === false){
         this.data.logo = url
         $('#loading').css({display: 'block'})
@@ -224,12 +234,16 @@ export default {
     },
     create(url){
       this.data.logo = url
+      if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
+        this.errorMessage = 'Invalid email address.'
+        return
+      }
       this.APIRequest('merchants/create', this.data).then(response => {
         if(response.data > 0){
           this.retrieve()
           this.successMessage = 'Successfully Updated!'
           this.errorMessage = null
-          AUTH.checkAuthentication(null)
+          AUTH.checkAuthentication(null, true)
         }else{
           this.successMessage = null
           this.errorMessage = 'Unable to Update! Please contact the administrator.'
