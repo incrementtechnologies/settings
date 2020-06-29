@@ -8,7 +8,7 @@
           <input type="text" class="form-control" placeholder="Enter First Name" v-model="data.first_name">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="allowed.indexOf('middle_name') > -1">
           <label for="address">Middle Name</label>
           <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="data.middle_name">
         </div>
@@ -28,7 +28,7 @@
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('cellular_number') > -1">
-          <label for="address">Cellular Number</label>
+          <label for="address">Phone Number</label>
           <input type="text" class="form-control" placeholder="Optional" v-model="data.cellular_number">
         </div>
 
