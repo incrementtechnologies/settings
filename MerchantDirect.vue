@@ -187,11 +187,6 @@ export default {
   },
   methods: {
     retrieve(){
-      if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
-        $('#loading').css({display: 'none'})
-        this.data = AUTH.user.subAccount.merchant
-        return
-      }
       let parameter = {
         condition: [{
           value: this.user.userID,
