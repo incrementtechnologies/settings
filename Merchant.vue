@@ -15,12 +15,17 @@
           <input type="text" class="form-control" placeholder="Business Name" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
-        <div class="form-group" style="margin-top: 25px;">
+        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('email') > -1">
           <label for="address">Business email address<label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business email address" v-model="data.email" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
-        <div class="form-group" style="margin-top: 25px;">
+        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('code') > -1">
+          <label for="address">ABN<label class="text-danger">*</label></label>
+          <input type="text" class="form-control" placeholder="Business code" v-model="data.business_code" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+        </div>
+
+        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('address') > -1">
           <label for="address">Business address <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business Address" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
