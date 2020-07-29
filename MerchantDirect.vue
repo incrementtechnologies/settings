@@ -5,25 +5,26 @@
       <span class="error text-danger" v-if="errorMessage !== null">
         <b>Oops!</b> {{errorMessage}}
       </span>
-      <span class="error text-success" v-if="successMessage !== null">
+      <!-- <span class="error text-success" v-if="successMessage !== null">
         {{successMessage}}
-      </span>
-      <span class="inputs">
-
-        <div class="form-group">
+      </span> -->
+      <br>
+      <span class="inputs" >
+        <div class="form-group">  
           <label for="address">{{params}} name <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" :placeholder="params + ' name'" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input type="text"  :readonly="isDisabled" class="form-control" :placeholder="params + ' name'" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)" >
         </div>
 
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">{{params}} e-mail address<label class="text-danger">*</label></label>
-          <input type="text" class="form-control" :placeholder="params + ' e-mail address'" v-model="data.email" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input type="text"  :readonly="isDisabled" class="form-control" :placeholder="params + ' e-mail address'" v-model="data.email" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">{{params}} address <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" :placeholder="params + ' address'" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input type="text" :readonly="isDisabled" class="form-control" :placeholder="params + ' address'" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
+
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">{{params}} Sanition Schedule <label class="text-danger">*</label></label>
           <input type="text" class="form-control" :placeholder="params + ' Sanition Schedule'" v-model="newData.schedule" disabled>
@@ -36,7 +37,7 @@
           </div>
         </div>
 
-<!--         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
+<!--   <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
           <label for="address">Prefix</label>
           <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
@@ -46,7 +47,11 @@
           <input type="text" class="form-control" placeholder="Company website url" v-model="data.website" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div> -->
         
-        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button>
+        <!-- <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()" :disabled="isDisabled" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button> -->
+        
+        <button v-bind:class="[ isDisabled ? 'btn btn-primary' : 'btn btn-success' ]" style="margin-bottom: 25px;" @click="isDisabled ? editProfile() : update()">{{ isDisabled ? 'Edit Profile' : 'Update Profile' }}</button>
+        <button class="btn btn-secondary" style="margin-bottom: 25px;" @click="cancelEdit" v-if="!isDisabled">Cancel</button>
+      
       </span>
       <span class="sidebar" v-if="createFlag === false">
         <span class="sidebar-header" style="margin-top: 25px;">{{params}} Logo</span>
@@ -65,7 +70,31 @@
       </span>
     </span>
     <browse-images-modal :object="photoObject"></browse-images-modal>
+
+  <!-- MODAL FOR UPDATE NOTIFICATION-->
+    <div class="modal fade right" id="successfully-updated" tabindex="1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+      <div class="modal-dialog modal-side modal-notify modal-primary " role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" v-bind:style="[ successfulUpdate ? {'color': 'green'} : {'color': 'red'} ]" >{{successfulUpdate ? successMessage : 'Failed to update!'}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" class="white-text">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body p-4" >
+            <p >{{successfulUpdate ? 'Your profile is successfully updated.' : 'Please do any changes of your profile.'}}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
+  
 </template>
 <style scoped>
 .merchant-holder{
@@ -179,9 +208,18 @@ export default {
     }else if(this.$route.path.includes('lgu')){
       this.params = 'LGU'
     }
+    console.log(this.beforeEditValues)
   },
   data(){
     return {
+      beforeEditValues: {
+        name: null,
+        email: null,
+        address: null
+      },
+      successfulUpdate: false,
+      isDisabled: true,
+      edit: false,
       user: AUTH.user,
       tokenData: AUTH.tokenData,
       config: CONFIG,
@@ -195,8 +233,7 @@ export default {
         email: null,
         address: null,
         name: null,
-        website: null,
-        schedule: []
+        website: null
       },
       createFlag: false,
       photoObject: {
@@ -219,6 +256,14 @@ export default {
         // console.log(this.newData.schedule)
       }
     },
+    cancelEdit(){
+      this.isDisabled = true
+      this.errorMessage = null
+      this.retrieve()
+    },
+    editProfile(){
+      this.isDisabled = false
+    },
     retrieve(){
       let parameter = {
         condition: [{
@@ -229,16 +274,16 @@ export default {
       }
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
-        let data = []
         if(response.data.length > 0){
           let tempRes = response.data[0].schedule.replace(/,/g, ' ')
           let Res = tempRes.trim().split(' ')
-          // console.log(Res)
           Res.forEach(doc => {
-            // console.log(doc)
             this.newData.schedule.push(doc)
           })
           this.data = response.data[0]
+          this.beforeEditValues.name = response.data[0].name
+          this.beforeEditValues.email = response.data[0].email
+          this.beforeEditValues.address = response.data[0].address
           this.createFlag = false
         }else{
           this.createFlag = true
@@ -247,32 +292,44 @@ export default {
       })
     },
     update(url){
-      if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
-        this.errorMessage = 'Invalid email address.'
-        return
-      }
-      if(this.createFlag === false){
-        this.data.logo = url
-        this.data.schedule = this.newData.schedule.toString()
-        $('#loading').css({display: 'block'})
-        this.APIRequest('merchants/update', this.data).then(response => {
-          if(response.data === true){
-            this.retrieve()
-            this.successMessage = 'Successfully Updated!'
-            this.errorMessage = null
-          }else{
-            this.successMessage = null
-            this.errorMessage = 'Unable to Update! Please contact the administrator.'
-          }
-          this.newData.schedule = []
-        })
+      if(this.beforeEditValues.name === this.data.name && this.beforeEditValues.email === this.data.email && this.beforeEditValues.address === this.data.address){
+        this.successfulUpdate = false
+        $('#successfully-updated').modal('show')
+      }else if((this.data.name === '') || (this.data.email === '') || (this.data.address === '')){
+        this.successfulUpdate = false
+        $('#successfully-updated').modal('show')
       }else{
-        this.create(url)
+        this.successfulUpdate = true
+        if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
+          this.errorMessage = 'Invalid email address.'
+          return
+        }
+        if(this.createFlag === false){
+          this.data.logo = url
+          this.data.schedule = this.newData.schedule.toString()
+          $('#loading').css({display: 'block'})
+          this.APIRequest('merchants/update', this.data).then(response => {
+            if(response.data === true){
+              this.retrieve()
+              this.successMessage = 'Successfully Updated!'
+              this.errorMessage = null
+            }else{
+              this.successMessage = null
+              this.errorMessage = 'Unable to Update! Please contact the administrator.'
+            }
+            this.newData.schedule = []
+          })
+        }else{
+          this.create(url)
+        }
+        this.isDisabled = true
+        setTimeout(() => {
+          $('#successfully-updated').modal('show')
+        }, 1000)
       }
     },
     create(url){
       this.data.logo = url
-      this.data.schedule = this.newData.schedule.toString()
       if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
         this.errorMessage = 'Invalid email address.'
         return
