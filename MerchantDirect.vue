@@ -25,6 +25,18 @@
           <input type="text" :readonly="isDisabled" class="form-control" :placeholder="params + ' address'" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
+        <div class="form-group" style="margin-top: 25px;">
+          <label for="address">{{params}} Sanition Schedule <label class="text-danger">*</label></label>
+          <input type="text" class="form-control" :placeholder="params + ' Sanition Schedule'" v-model="newData.schedule" disabled>
+          <br/>
+          <h5>Select Schedule from Available days below:</h5><br/>
+          <div class="row"> 
+            <div class="col-sm-2" v-for="(day, index) in days" :key="index">
+              <button class="btn btn-light" @click="selectDay(day)">{{day}}</button>
+            </div>
+          </div>
+        </div>
+
 <!--   <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
           <label for="address">Prefix</label>
           <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
@@ -227,13 +239,23 @@ export default {
       photoObject: {
         url: null
       },
-      params: 'Business'
+      params: 'Business',
+      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     }
   },
   components: {
     'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
   },
   methods: {
+    selectDay(day){
+      if(this.newData.schedule.includes(day)){
+        // console.log(this.data.schedule)
+        this.newData.schedule.splice(this.newData.schedule.indexOf(day), 1)
+      }else{
+        this.newData.schedule.push(day)
+        // console.log(this.newData.schedule)
+      }
+    },
     cancelEdit(){
       this.isDisabled = true
       this.errorMessage = null
@@ -253,6 +275,11 @@ export default {
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
+          let tempRes = response.data[0].schedule.replace(/,/g, ' ')
+          let Res = tempRes.trim().split(' ')
+          Res.forEach(doc => {
+            this.newData.schedule.push(doc)
+          })
           this.data = response.data[0]
           this.beforeEditValues.name = response.data[0].name
           this.beforeEditValues.email = response.data[0].email
@@ -279,6 +306,7 @@ export default {
         }
         if(this.createFlag === false){
           this.data.logo = url
+          this.data.schedule = this.newData.schedule.toString()
           $('#loading').css({display: 'block'})
           this.APIRequest('merchants/update', this.data).then(response => {
             if(response.data === true){
@@ -289,6 +317,7 @@ export default {
               this.successMessage = null
               this.errorMessage = 'Unable to Update! Please contact the administrator.'
             }
+            this.newData.schedule = []
           })
         }else{
           this.create(url)
