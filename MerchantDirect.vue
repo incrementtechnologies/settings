@@ -275,11 +275,13 @@ export default {
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
-          let tempRes = response.data[0].schedule.replace(/,/g, ' ')
-          let Res = tempRes.trim().split(' ')
-          Res.forEach(doc => {
-            this.newData.schedule.push(doc)
-          })
+          if(response.data[0].schedule !== null){
+            let tempRes = response.data[0].schedule.replace(/,/g, ' ')
+            let Res = tempRes.trim().split(' ')
+            Res.forEach(doc => {
+              this.newData.schedule.push(doc)
+            })
+          }
           this.data = response.data[0]
           this.beforeEditValues.name = response.data[0].name
           this.beforeEditValues.email = response.data[0].email
