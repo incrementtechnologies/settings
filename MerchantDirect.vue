@@ -29,7 +29,7 @@
           <label for="address">{{params}} Sanition Schedule <label class="text-danger">*</label></label>
           <input type="text" class="form-control" :placeholder="params + ' Sanition Schedule'" v-model="newData.schedule" disabled>
           <br/>
-          <h5>Select Schedule from Available days below:</h5><br/>
+          Select Schedule from Available days below:<br/>
           <div class="row"> 
             <div class="col-sm-2" v-for="(day, index) in days" :key="index">
               <button class="btn btn-light" @click="selectDay(day)">{{day}}</button>
@@ -233,14 +233,15 @@ export default {
         email: null,
         address: null,
         name: null,
-        website: null
+        website: null,
+        schedule: []
       },
       createFlag: false,
       photoObject: {
         url: null
       },
       params: 'Business',
-      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     }
   },
   components: {
@@ -294,6 +295,10 @@ export default {
       })
     },
     update(url){
+      if(this.createFlag === true){
+        this.create()
+        return
+      }
       if(this.beforeEditValues.name === this.data.name && this.beforeEditValues.email === this.data.email && this.beforeEditValues.address === this.data.address){
         this.successfulUpdate = false
         $('#successfully-updated').modal('show')
