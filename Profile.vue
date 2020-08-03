@@ -303,7 +303,7 @@ export default {
       }
     },
     validate(){
-      if(this.data.cellular_number !== null){
+      if(this.data.cellular_number !== null && this.data.cellular_number !== ''){
         this.valid()
         if(this.data.cellular_number.length > 11){
           this.data.cellular_number = this.data.cellular_number.slice(0, 11)
