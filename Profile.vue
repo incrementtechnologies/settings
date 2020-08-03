@@ -2,49 +2,62 @@
   <div class="profile-holder">
     <span class="header">Profile</span>
     <span class="content">
+      <center><span style="color:green; font-size:25px;" v-if="sucMessage">Saved Changes✔✔✔</span></center>
       <span class="inputs" v-if="data !== null">
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">First Name</label>
-          <input type="text" class="form-control" placeholder="Enter First Name" v-model="data.first_name">
+          <i style="color:red; font-style:italic;" v-if="fNameShow">Firstname required!</i>
+          <p class="dataDesign" v-if="!inputEnable">&ensp;{{data.first_name}}</p>
+          <input type="text" v-if="inputEnable" class="form-control" placeholder="Enter First Name" v-model="data.first_name">
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('middle_name') > -1">
           <label for="address">Middle Name</label>
-          <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="data.middle_name">
+          <input type="text" v-if="inputEnable" class="form-control" placeholder="Enter Middle Name" v-model="data.middle_name">
         </div>
 
         <div class="form-group">
           <label for="address">Last Name</label>
-          <input type="text" class="form-control" placeholder="Enter Last Name" v-model="data.last_name">
+          <i style="color:red; font-style:italic;" v-if="lNameShow">Lastname required!</i>
+          <p class="dataDesign" v-if="!inputEnable">&ensp;{{data.last_name}}</p>
+          <input type="text" v-if="inputEnable" class="form-control" placeholder="Enter Last Name" v-model="data.last_name">
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('sex') > -1">
           <label for="address">Gender</label>
-          <select class="form-control" v-model="data.sex">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+          <p class="dataDesign" v-if="!inputEnable">&ensp;{{data.sex}}</p>
+          <select class="form-control" v-if="inputEnable" v-model="data.sex">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
             <option value="others">Others</option>
           </select>
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('cellular_number') > -1">
-          <label for="address">Phone Number</label>
-          <input type="text" class="form-control" placeholder="Optional" v-model="data.cellular_number">
+          <label for="address">Phone Number(Optional)</label>
+          <i style="color:red; font-style:italic;" v-if="cpShow">Invalid phone number</i>
+          <p class="dataDesign" v-if="!inputEnable">&ensp;{{data.cellular_number}}</p>
+          <input type="number" class="form-control" v-if="inputEnable" placeholder="63+" v-model="data.cellular_number">
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('address') > -1">
           <label for="address">Address</label>
-          <input type="text" class="form-control" placeholder="Enter Address" v-model="data.address">
+          <i style="color:red; font-style:italic;" v-if="addressShow">Address required!</i>
+          <p class="dataDesign" v-if="!inputEnable">&ensp;{{data.address}}</p>
+          <input type="text" class="form-control" v-if="inputEnable" placeholder="Enter Address" v-model="data.address">
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('birth_date') > -1">
           <label for="address">Birthdate</label>
-          <input type="date" class="form-control" v-model="data.birth_date" placeholder="Select your birthdate">
+          <i style="color:red; font-style:italic;" v-if="bdateShow">Birthdate required!</i>
+          <p class="dataDesign" v-if="!inputEnable">&ensp;{{data.birth_date}}</p>
+          <input type="date" class="form-control" v-if="inputEnable" max="2020-12-31" v-model="data.birth_date" placeholder="Select your birthdate">
         </div>
 
-        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()">Update</button>
+        <button class="btn btn-primary" v-if="btnUpdate" style="margin-bottom: 25px;" @click="enableUpdate">Update</button>
+        <button class="btn btn-primary" v-if="!btnUpdate" style="margin-bottom: 25px;" @click="validate">Save Changes</button>
       
-      </span>
+      </span> 
       <span class="sidebar">
         <span class="sidebar-header" style="margin-top: 25px; font-weight: bold;">Profile Picture</span>
         <span class="image" v-if="user.profile !== null" >
@@ -65,6 +78,13 @@
   </div>
 </template>
 <style scoped>
+.dataDesign{
+  border: solid 1px;
+  border-radius: 10px;
+  width: 100%;
+  padding: 5px;
+  font-size: 15px;
+}
 .profile-holder{
   width: 95%;
   float: left;
@@ -135,9 +155,9 @@
 }
 
 #featured-image-remove{
-  top: 60px;
-  right: 10px;
-  /* z-index: 1000; */
+  top: 50px;
+  right: 5px;
+  z-index: 1000;
   font-size: 24px;
 }
 
@@ -159,6 +179,7 @@ import ROUTER from 'src/router'
 import AUTH from 'src/services/auth'
 import axios from 'axios'
 import CONFIG from 'src/config.js'
+// import moment from 'moment'
 export default {
   mounted(){
     $('#loading').css({'display': 'block'})
@@ -166,6 +187,15 @@ export default {
   },
   data(){
     return {
+      btnUpdate: true,
+      inputEnable: false,
+      secData: [],
+      sucMessage: false,
+      cpShow: false,
+      lNameShow: false,
+      fNameShow: false,
+      addressShow: false,
+      bdateShow: false,
       user: AUTH.user,
       tokenData: AUTH.tokenData,
       config: CONFIG,
@@ -180,7 +210,19 @@ export default {
   components: {
     'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
   },
+  computed: {
+    showFname(){
+      return this.fNameShow
+    },
+    showLname(){
+      return this.lNameShow
+    }
+  },
   methods: {
+    enableUpdate(){
+      this.btnUpdate = false
+      this.inputEnable = true
+    },
     retrieve(){
       let parameter = {
         condition: [{
@@ -199,14 +241,22 @@ export default {
       })
     },
     update(){
-      if(this.validate()){
-        $('#loading').css({'display': 'block'})
-        this.APIRequest('account_informations/update', this.data).then(response => {
-          if(response.data === true){
-            this.retrieve()
-          }
-        })
-      }
+      $('#loading').css({'display': 'block'})
+      this.APIRequest('account_informations/update', this.data).then(response => {
+        if(response.data === true){
+          this.sucMessage = true
+          this.intervalMessage()
+          this.retrieve()
+          this.btnUpdate = true
+          this.inputEnable = false
+        }
+      })
+    },
+    intervalMessage(){
+      setInterval(() => {
+        this.sucMessage = false
+      }, 3000)
+      clearInterval(this.polling)
     },
     updatePhoto(object){
       $('#loading').css({'display': 'block'})
@@ -226,12 +276,62 @@ export default {
         }
       })
     },
-    validate(){
-      let i = this.data
-      if(i.first_name !== null && i.last_name !== null){
-        return true
+    valid(){
+      if(this.data.last_name === null || this.data.last_name === ''){
+        this.lNameShow = true
       }
-      return false
+      if(this.data.first_name === null || this.data.first_name === ''){
+        this.fNameShow = true
+      }
+      if(this.data.address === null || this.data.address === ''){
+        this.addressShow = true
+      }
+      if(this.data.birth_date === null || this.data.birth_date === ''){
+        this.bdateShow = true
+      }
+      if(this.data.last_name !== ''){
+        this.lNameShow = false
+      }
+      if(this.data.first_name !== ''){
+        this.fNameShow = false
+      }
+      if(this.data.address !== ''){
+        this.addressShow = false
+      }
+      if(this.data.birth_date !== ''){
+        this.birth_date = false
+      }
+    },
+    validate(){
+      if(this.data.cellular_number !== null){
+        this.valid()
+        if(this.data.cellular_number.length > 11){
+          this.data.cellular_number = this.data.cellular_number.slice(0, 11)
+          this.cpShow = true
+        }else if(this.data.cellular_number.slice(0, 2) !== '09'){
+          this.cpShow = true
+        }else if((this.data.cellular_number.length < 11 && this.data.cellular_number.length >= 1)){
+          this.cpShow = true
+          if(this.data.cellular_number.slice(0, 2) !== '09'){
+            this.cpShow = true
+          }
+        }else{
+          if(this.data.last_name !== '' && this.data.first_name !== '' && this.data.address !== '' && this.data.birth_date !== ''){
+            this.cpShow = false
+            this.lNameShow = false
+            this.fNameShow = false
+            this.update()
+          }
+        }
+      }else if(this.data.cellular_number === null || this.data.cellular_number === ''){
+        this.valid()
+        if(this.data.last_name !== '' && this.data.first_name !== '' && this.data.address !== '' && this.data.birth_date !== ''){
+          this.cpShow = false
+          this.lNameShow = false
+          this.fNameShow = false
+          this.update()
+        }
+      }
     },
     showImages(){
       $('#browseImagesModal').modal('show')
