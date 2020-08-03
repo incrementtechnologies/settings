@@ -49,9 +49,10 @@
 
         <div class="form-group" v-if="allowed.indexOf('birth_date') > -1">
           <label for="address">Birthdate</label>
+          <i style="color:red; font-style:italic;" v-if="dateInvalidShow">Invalid date!</i>
           <i style="color:red; font-style:italic;" v-if="bdateShow">Birthdate required!</i>
           <p class="dataDesign" v-if="!inputEnable">&ensp;{{data.birth_date}}</p>
-          <input type="date" class="form-control" v-if="inputEnable" max="2020-12-31" v-model="data.birth_date" placeholder="Select your birthdate">
+          <input type="date" class="form-control" v-if="inputEnable" :max="dateLimit" v-model="data.birth_date" placeholder="Select your birthdate">
         </div>
 
         <button class="btn btn-primary" v-if="btnUpdate" style="margin-bottom: 25px;" @click="enableUpdate">Update</button>
@@ -179,7 +180,7 @@ import ROUTER from 'src/router'
 import AUTH from 'src/services/auth'
 import axios from 'axios'
 import CONFIG from 'src/config.js'
-// import moment from 'moment'
+import moment from 'moment'
 export default {
   mounted(){
     $('#loading').css({'display': 'block'})
@@ -187,6 +188,8 @@ export default {
   },
   data(){
     return {
+      dateLimit: moment(new Date(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
+      dateInvalidShow: false,
       btnUpdate: true,
       inputEnable: false,
       secData: [],
@@ -289,6 +292,9 @@ export default {
       if(this.data.birth_date === null || this.data.birth_date === ''){
         this.bdateShow = true
       }
+      if(this.data.birth_date > this.dateLimit){
+        this.dateInvalidShow = true
+      }
       if(this.data.last_name !== ''){
         this.lNameShow = false
       }
@@ -299,7 +305,10 @@ export default {
         this.addressShow = false
       }
       if(this.data.birth_date !== ''){
-        this.birth_date = false
+        this.bdateShow = false
+      }
+      if(this.data.birth_date <= this.dateLimit){
+        this.dateInvalidShow = false
       }
     },
     validate(){
@@ -316,7 +325,7 @@ export default {
             this.cpShow = true
           }
         }else{
-          if(this.data.last_name !== '' && this.data.first_name !== '' && this.data.address !== '' && this.data.birth_date !== ''){
+          if(this.data.last_name !== '' && this.data.first_name !== '' && this.data.address !== '' && this.data.birth_date !== '' && this.dateInvalidShow === false){
             this.cpShow = false
             this.lNameShow = false
             this.fNameShow = false
@@ -325,7 +334,7 @@ export default {
         }
       }else if(this.data.cellular_number === null || this.data.cellular_number === ''){
         this.valid()
-        if(this.data.last_name !== '' && this.data.first_name !== '' && this.data.address !== '' && this.data.birth_date !== ''){
+        if(this.data.last_name !== '' && this.data.first_name !== '' && this.data.address !== '' && this.data.birth_date !== '' && this.dateInvalidShow === false){
           this.cpShow = false
           this.lNameShow = false
           this.fNameShow = false
