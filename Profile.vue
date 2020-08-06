@@ -1,6 +1,14 @@
 <template>
   <div class="profile-holder">
     <span class="header">Profile</span>
+    <span v-if="alertMessage.message !== null" class="alert-message">
+      <p :class="`alert ${alertMessage.type ? `alert-${alertMessage.type}` : ''} alert-dismissible fade show`" role="alert">
+        {{ alertMessage.message }}
+        <button @click="alertMessage = { type: null, message: null }" type="button" class="close" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </p>
+    </span>
     <span class="content">
       <span class="inputs" v-if="data !== null">
         <div class="form-group" style="margin-top: 25px;">
@@ -153,6 +161,13 @@
     margin-left: 0%;
   }
 }
+
+.alert-message {
+    width: 100%;
+    height: 28px;
+    float: left;
+    margin-top: 14px;
+}
 </style>
 <script>
 import ROUTER from 'src/router'
@@ -173,6 +188,10 @@ export default {
       newProfile: {
         account_id: null,
         url: null
+      },
+      alertMessage: {
+        type: null,
+        message: null
       }
     }
   },
@@ -203,7 +222,21 @@ export default {
         $('#loading').css({'display': 'block'})
         this.APIRequest('account_informations/update', this.data).then(response => {
           if(response.data === true){
+            this.alertMessage = {
+              type: 'success',
+              message: 'Updated successfully!'
+            }
             this.retrieve()
+          } else {
+            this.alertMessage = {
+              type: 'warning',
+              message: 'Error updating profile. Try again'
+            }
+          }
+        }).fail(() => {
+          this.alertMessage = {
+            type: 'danger',
+            message: 'Error updating profile'
           }
         })
       }
