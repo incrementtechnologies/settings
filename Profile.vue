@@ -332,7 +332,7 @@ export default {
             this.update()
           }
         }
-      }else if(this.data.cellular_number === null || this.data.cellular_number === ''){
+      }else{
         this.valid()
         if(this.data.last_name !== '' && this.data.first_name !== '' && this.data.address !== '' && this.data.birth_date !== '' && this.dateInvalidShow === false){
           this.cpShow = false
