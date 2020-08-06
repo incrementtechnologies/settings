@@ -1,6 +1,6 @@
 <template>
   <div class="merchant-holder" v-if="data !== null">
-    <span class="header">{{title}}</span>
+    <span class="header">{{params}} Settings</span>
     <span class="content">
       <span class="error text-danger" v-if="errorMessage !== null">
         <b>Oops!</b> {{errorMessage}}
@@ -15,29 +15,14 @@
           <input type="text" class="form-control" placeholder="Business Name" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
-        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('email') > -1">
-          <label for="address">Business email address<label class="text-danger">*</label></label>
+        <div class="form-group" style="margin-top: 25px;">
+          <label for="address">Business e-mail address<label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business email address" v-model="data.email" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
-        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('code') > -1">
-          <label for="address">ABN<label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Business code" v-model="data.business_code" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
-        </div>
-
-        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('address') > -1">
+        <div class="form-group" style="margin-top: 25px;">
           <label for="address">Business address <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Business Address" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
-        </div>
-
-        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
-          <label for="address">Prefix</label>
-          <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
-        </div>
-
-        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
-          <label for="address">Website</label>
-          <input type="text" class="form-control" placeholder="Company website url" v-model="data.website" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
         
         <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button>
@@ -63,9 +48,8 @@
 </template>
 <style scoped>
 .merchant-holder{
-  width: 95%;
+  width: 100%;
   float: left;
-  margin-left: 5%;
   margin-bottom: 200px;
 }
 .header{
@@ -161,8 +145,18 @@ import axios from 'axios'
 import CONFIG from 'src/config.js'
 export default {
   mounted(){
+    if(this.user.type !== 'ADMIN' && this.user.type !== 'BUSINESS' && this.user.type !== 'AGENCY_GOV' && this.user.type !== 'AGENCY_BRGY'){
+      ROUTER.push('/dashboard')
+    }
     $('#loading').css({display: 'block'})
     this.retrieve()
+    if(this.$route.path.includes('barangay')){
+      this.params = 'Barangay'
+    }else if(this.$route.path.includes('business')){
+      this.params = 'Business'
+    }else if(this.$route.path.includes('lgu')){
+      this.params = 'LGU'
+    }
   },
   data(){
     return {
@@ -184,7 +178,8 @@ export default {
       createFlag: false,
       photoObject: {
         url: null
-      }
+      },
+      params: 'Business'
     }
   },
   props: ['title', 'allowed'],
@@ -193,11 +188,6 @@ export default {
   },
   methods: {
     retrieve(){
-      if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
-        $('#loading').css({display: 'none'})
-        this.data = AUTH.user.subAccount.merchant
-        return
-      }
       let parameter = {
         condition: [{
           value: this.user.userID,

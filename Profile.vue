@@ -8,7 +8,7 @@
           <input type="text" class="form-control" placeholder="Enter First Name" v-model="data.first_name">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="allowed.indexOf('middle_name') > -1">
           <label for="address">Middle Name</label>
           <input type="text" class="form-control" placeholder="Enter Middle Name" v-model="data.middle_name">
         </div>
@@ -28,7 +28,7 @@
         </div>
 
         <div class="form-group" v-if="allowed.indexOf('cellular_number') > -1">
-          <label for="address">Cellular Number</label>
+          <label for="address">Phone Number</label>
           <input type="text" class="form-control" placeholder="Optional" v-model="data.cellular_number">
         </div>
 
@@ -46,17 +46,17 @@
       
       </span>
       <span class="sidebar">
-        <span class="sidebar-header" style="margin-top: 25px;">Profile Picture</span>
-        <span class="image" v-if="user.profile !== null">
+        <span class="sidebar-header" style="margin-top: 25px; font-weight: bold;">Profile Picture</span>
+        <span class="image" v-if="user.profile !== null" >
           <img :src="config.BACKEND_URL + user.profile.url" height="auto" width="100%" >
         </span>
-        <span class="image" v-else>
-          <i class="fa fa-user-circle-o" ></i>
+        <span class="image" v-else  style="border: 2px solid gray; border-radius: 5px;">
+          <i class="far fa-user-circle profile-icon"></i>
         </span>
         <label class="remove-image text-danger" id="featured-image-remove" @click="removeImage(user.profile.id)" v-if="user.profile !== null">
           <i class="fa fa-times"></i>
         </label>
-        <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()">Select from images
+        <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()">{{user.profile !== null ? 'Change Profile Picture' : 'Select from images'}}
         </button>
       </span>
     </span>
@@ -135,9 +135,9 @@
 }
 
 #featured-image-remove{
-  top: 50px;
-  right: 5px;
-  z-index: 1000;
+  top: 60px;
+  right: 10px;
+  /* z-index: 1000; */
   font-size: 24px;
 }
 
