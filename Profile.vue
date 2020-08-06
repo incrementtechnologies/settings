@@ -1,8 +1,15 @@
 <template>
   <div class="profile-holder">
     <span class="header">Profile</span>
+    <span v-if="alertMessage.message !== null" class="alert-message">
+      <p :class="`alert ${alertMessage.type ? `alert-${alertMessage.type}` : ''} alert-dismissible fade show`" role="alert">
+        {{ alertMessage.message }}
+        <button @click="alertMessage = { type: null, message: null }" type="button" class="close" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </p>
+    </span>
     <span class="content">
-      <center><span style="color:green; font-size:25px;" v-if="sucMessage">Saved Changes✔✔✔</span></center>
       <span class="inputs" v-if="data !== null">
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">First Name</label>
@@ -174,6 +181,13 @@
     margin-left: 0%;
   }
 }
+
+.alert-message {
+    width: 100%;
+    height: 28px;
+    float: left;
+    margin-top: 14px;
+}
 </style>
 <script>
 import ROUTER from 'src/router'
@@ -193,7 +207,6 @@ export default {
       btnUpdate: true,
       inputEnable: false,
       secData: [],
-      sucMessage: false,
       cpShow: false,
       lNameShow: false,
       fNameShow: false,
@@ -206,6 +219,10 @@ export default {
       newProfile: {
         account_id: null,
         url: null
+      },
+      alertMessage: {
+        type: null,
+        message: null
       }
     }
   },
@@ -247,19 +264,35 @@ export default {
       $('#loading').css({'display': 'block'})
       this.APIRequest('account_informations/update', this.data).then(response => {
         if(response.data === true){
-          this.sucMessage = true
-          this.intervalMessage()
+          this.alertMessage = {
+            type: 'success',
+            message: 'Updated successfully!'
+          }
           this.retrieve()
           this.btnUpdate = true
           this.inputEnable = false
+        } else {
+          this.alertMessage = {
+            type: 'warning',
+            message: 'Error updating profile. Try again'
+          }
+        }
+      }).fail(() => {
+        this.alertMessage = {
+          type: 'danger',
+          message: 'Error updating profile'
         }
       })
-    },
-    intervalMessage(){
-      setInterval(() => {
-        this.sucMessage = false
-      }, 3000)
-      clearInterval(this.polling)
+      // $('#loading').css({'display': 'block'})
+      // this.APIRequest('account_informations/update', this.data).then(response => {
+      //   if(response.data === true){
+      //     this.sucMessage = true
+      //     this.intervalMessage()
+      //     this.retrieve()
+      //     this.btnUpdate = true
+      //     this.inputEnable = false
+      //   }
+      // })
     },
     updatePhoto(object){
       $('#loading').css({'display': 'block'})
