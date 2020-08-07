@@ -71,7 +71,7 @@
         <span class="image" v-if="user.profile !== null" >
           <img :src="config.BACKEND_URL + user.profile.url" height="auto" width="100%" >
         </span>
-        <span class="image" v-else  style="border: 2px solid gray; border-radius: 5px;">
+        <span class="image" v-else  style="border: 2px solid #e1e1e3; border-radius: 5px;">
           <i class="far fa-user-circle profile-icon"></i>
         </span>
         <label class="remove-image text-danger" id="featured-image-remove" @click="removeImage(user.profile.id)" v-if="user.profile !== null">
@@ -88,7 +88,8 @@
 <style scoped>
 .dataDesign{
   border: solid 1px;
-  border-radius: 10px;
+  border-color: #c1bfc7;
+  border-radius: 2px;
   width: 100%;
   padding: 5px;
   font-size: 15px;
