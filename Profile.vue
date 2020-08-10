@@ -62,7 +62,7 @@
           <input type="date" class="form-control" v-if="inputEnable" :max="dateLimit" v-model="data.birth_date" placeholder="Select your birthdate">
         </div>
 
-        <button class="btn btn-primary" v-if="btnUpdate" style="margin-bottom: 25px;" @click="enableUpdate">Update</button>
+        <button class="btn btn-primary" v-if="btnUpdate" style="margin-bottom: 25px;" @click="enableUpdate">Edit Profile</button>
         <button class="btn btn-primary" v-if="!btnUpdate" style="margin-bottom: 25px;" @click="validate">Save Changes</button>
       
       </span> 
