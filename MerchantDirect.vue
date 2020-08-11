@@ -94,9 +94,8 @@
 </template>
 <style scoped>
 .merchant-holder{
-  width: 95%;
+  width: 100%;
   float: left;
-  margin-left: 5%;
   margin-bottom: 200px;
 }
 .header{
