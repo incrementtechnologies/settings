@@ -198,8 +198,12 @@ import CONFIG from 'src/config.js'
 import moment from 'moment'
 export default {
   mounted(){
-    $('#loading').css({'display': 'block'})
-    this.retrieve()
+    let user = JSON.parse(localStorage.getItem('account/' + this.user.code))
+    if(user && user.information !== undefined){
+      this.data = user.information
+    }else{
+      this.data = null
+    }
   },
   data(){
     return {
@@ -252,10 +256,13 @@ export default {
           clause: '='
         }]
       }
+      $('#loading').css({'display': 'block'})
       this.APIRequest('account_informations/retrieve', parameter).then(response => {
         $('#loading').css({'display': 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
+          this.user.information = response.data[0]
+          localStorage.setItem('account/' + this.user.code, JSON.stringify(this.user))
         }else{
           this.data = null
         }
