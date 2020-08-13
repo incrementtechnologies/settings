@@ -301,11 +301,11 @@ export default {
       $('#loading').css({display: flag ? 'block' : 'none'})
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
+        localStorage.setItem('merchants/' + this.user.code, JSON.stringify(response))
         if(response.data.length > 0){
           this.manageSchedule(response)
           this.data = response.data[0]
           this.createFlag = false
-          localStorage.setItem('merchants/' + this.user.code, JSON.stringify(response))
         }else{
           this.createFlag = true
           this.data = this.newData
