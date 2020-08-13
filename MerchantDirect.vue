@@ -203,7 +203,11 @@ export default {
     }
     let data = JSON.parse(localStorage.getItem('merchants/' + this.user.code))
     if(data){
-      this.data = data.data
+      if(data.data.length > 0){
+        this.data = data.data
+      }else{
+        this.data = null
+      }
       this.manageSchedule(data)
       this.retrieve(false)
     }else{
