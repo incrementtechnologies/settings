@@ -208,7 +208,7 @@ export default {
       }else{
         this.data = null
       }
-      this.manageSchedule(data)
+      // this.manageSchedule(data)
       this.retrieve(false)
     }else{
       this.data = null
