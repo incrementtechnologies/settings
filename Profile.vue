@@ -166,7 +166,7 @@
 #featured-image-remove{
   top: 50px;
   right: 5px;
-  z-index: 1000;
+  z-index: 1;
   font-size: 24px;
 }
 
