@@ -23,6 +23,12 @@
         </tr>
       </tbody>
     </table>
+    <Pager
+      :pages="numPages"
+      :active="activePage"
+      :limit="limit"
+      v-if="data !== null"
+    />
     <empty v-if="data === null" :title="'No accounts yet!'" :action="'Please add new account.'" :icon="'far fa-smile'" :iconColor="'text-primary'"></empty>
     <create-modal :property="createSubAccountModal"></create-modal>
   </div>
@@ -45,6 +51,7 @@ import AUTH from 'src/services/auth'
 import axios from 'axios'
 import CONFIG from 'src/config.js'
 import SubAccount from './CreateSubAccount.js'
+import Pager from 'src/components/increment/generic/pager/Pager.vue'
 export default {
   mounted(){
     this.retrieve()
@@ -54,12 +61,16 @@ export default {
       user: AUTH.user,
       config: CONFIG,
       data: null,
-      createSubAccountModal: SubAccount
+      createSubAccountModal: SubAccount,
+      numPages: null,
+      activePage: 1,
+      limit: 5
     }
   },
   components: {
     'empty': require('components/increment/generic/empty/EmptyDynamicIcon.vue'),
-    'create-modal': require('components/increment/generic/modal/Modal.vue')
+    'create-modal': require('components/increment/generic/modal/Modal.vue'),
+    Pager
   },
   methods: {
     retrieve(sort = null){
@@ -69,14 +80,18 @@ export default {
           value: this.user.userID,
           column: 'account_id',
           clause: '='
-        }]
+        }],
+        limit: this.limit,
+        offset: (this.activePage > 0) ? ((this.activePage - 1) * this.limit) : this.activePage
       }
       this.APIRequest('sub_accounts/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data
+          this.numPages = parseInt(response.size / this.limit) + (response.size % this.limit ? 1 : 0)
         }else{
           this.data = null
+          this.numPages = null
         }
       })
     },
