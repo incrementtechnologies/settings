@@ -218,7 +218,7 @@ export default {
         this.APIRequest('accounts/update_password', parameter).then(response => {
           $('#loading').css({display: 'none'})
           if(response.data === true){
-            AUTH.checkAuthentication(null)
+            // AUTH.checkAuthentication(null)
             this.successMessagePassword = 'Successfully updated!'
           }
         })
@@ -234,7 +234,7 @@ export default {
       this.APIRequest('accounts/update_type', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data === true){
-          AUTH.checkAuthentication(null)
+          // AUTH.checkAuthentication(null)
           this.successMessageType = 'Successfully updated!'
         }
       })
@@ -251,7 +251,7 @@ export default {
           $('#loading').css({display: 'none'})
           if(response.data === true){
             this.errorMessageEmail = null
-            AUTH.checkAuthentication(null)
+            // AUTH.checkAuthentication(null)
             this.successMessageEmail = 'Successfully updated!'
           }else{
             this.errorMessageEmail = response.error
