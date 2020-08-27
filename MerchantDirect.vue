@@ -94,9 +94,8 @@
 </template>
 <style scoped>
 .merchant-holder{
-  width: 95%;
+  width: 100%;
   float: left;
-  margin-left: 5%;
   margin-bottom: 200px;
 }
 .header{
@@ -195,8 +194,6 @@ export default {
     if(this.user.type !== 'ADMIN' && this.user.type !== 'BUSINESS' && this.user.type !== 'AGENCY_GOV' && this.user.type !== 'AGENCY_BRGY'){
       ROUTER.push('/dashboard')
     }
-    $('#loading').css({display: 'block'})
-    this.retrieve()
     if(this.$route.path.includes('barangay')){
       this.params = 'Barangay'
     }else if(this.$route.path.includes('business')){
@@ -204,7 +201,19 @@ export default {
     }else if(this.$route.path.includes('lgu')){
       this.params = 'LGU'
     }
-    console.log(this.beforeEditValues)
+    let data = JSON.parse(localStorage.getItem('merchants/' + this.user.code))
+    if(data){
+      if(data.data.length > 0){
+        this.data = data.data
+      }else{
+        this.data = null
+      }
+      // this.manageSchedule(data)
+      this.retrieve(false)
+    }else{
+      this.data = null
+      this.retrieve(true)
+    }
   },
   data(){
     return {
@@ -271,7 +280,21 @@ export default {
         // console.log(this.newData.schedule)
       }
     },
-    retrieve(){
+    manageSchedule(response){
+      if(response.data[0].schedule !== null){
+        let tempRes = response.data[0].schedule.replace(/,/g, ' ')
+        let Res = tempRes.trim().split(' ')
+        Res.forEach(doc => {
+          this.newData.schedule.push(doc)
+          this.days.map(el => {
+            if(el.day === doc){
+              el.clicked = !this.clicked
+            }
+          })
+        })
+      }
+    },
+    retrieve(flag){
       let parameter = {
         condition: [{
           value: this.user.userID,
@@ -279,21 +302,12 @@ export default {
           clause: '='
         }]
       }
+      $('#loading').css({display: flag ? 'block' : 'none'})
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
+        localStorage.setItem('merchants/' + this.user.code, JSON.stringify(response))
         if(response.data.length > 0){
-          if(response.data[0].schedule !== null){
-            let tempRes = response.data[0].schedule.replace(/,/g, ' ')
-            let Res = tempRes.trim().split(' ')
-            Res.forEach(doc => {
-              this.newData.schedule.push(doc)
-              this.days.map(el => {
-                if(el.day === doc){
-                  el.clicked = !this.clicked
-                }
-              })
-            })
-          }
+          this.manageSchedule(response)
           this.data = response.data[0]
           this.createFlag = false
         }else{
