@@ -192,6 +192,14 @@ export default {
       alertMessage: {
         type: null,
         message: null
+      },
+      temp: {
+        fname: null,
+        lname: null,
+        number: null,
+        address: null,
+        mname: null,
+        bdate: null
       }
     }
   },
@@ -212,33 +220,49 @@ export default {
         $('#loading').css({'display': 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
+          this.temp = {
+            fname: this.data.first_name,
+            lname: this.data.last_name,
+            number: this.data.cellular_number,
+            address: this.data.address,
+            mname: this.data.middle_name,
+            bdate: this.data.birth_date
+          }
         }else{
           this.data = null
         }
       })
     },
     update(){
+      console.log(this.temp)
       if(this.validate()){
-        $('#loading').css({'display': 'block'})
-        this.APIRequest('account_informations/update', this.data).then(response => {
-          if(response.data === true){
-            this.alertMessage = {
-              type: 'success',
-              message: 'Updated successfully!'
+        if(this.temp.fname !== this.data.first_name || this.temp.lname !== this.data.last_name || this.temp.mname !== this.data.middle_name || this.temp.number !== this.data.cellular_number || this.temp.address !== this.data.address || this.temp.bdate !== this.data.birth_date) {
+          $('#loading').css({'display': 'block'})
+          this.APIRequest('account_informations/update', this.data).then(response => {
+            if(response.data === true){
+              this.alertMessage = {
+                type: 'success',
+                message: 'Updated successfully!'
+              }
+              this.retrieve()
+            } else {
+              this.alertMessage = {
+                type: 'warning',
+                message: 'Error updating profile. Try again'
+              }
             }
-            this.retrieve()
-          } else {
+          }).fail(() => {
             this.alertMessage = {
-              type: 'warning',
-              message: 'Error updating profile. Try again'
+              type: 'danger',
+              message: 'Error updating profile'
             }
-          }
-        }).fail(() => {
+          })
+        } else {
           this.alertMessage = {
-            type: 'danger',
-            message: 'Error updating profile'
+            type: 'success',
+            message: 'You did not change anything!'
           }
-        })
+        }
       }
     },
     updatePhoto(object){

@@ -163,6 +163,14 @@ export default {
   mounted(){
     $('#loading').css({display: 'block'})
     this.retrieve()
+    this.temp = {
+      name: this.data.name,
+      email: this.data.email,
+      business_code: this.data.business_code,
+      address: this.data.address,
+      prefix: this.data.prefix,
+      website: this.data.website
+    }
   },
   data(){
     return {
@@ -184,6 +192,14 @@ export default {
       createFlag: false,
       photoObject: {
         url: null
+      },
+      temp: {
+        name: null,
+        email: null,
+        business_code: null,
+        address: null,
+        prefix: null,
+        website: null
       }
     }
   },
@@ -217,23 +233,27 @@ export default {
       })
     },
     update(url){
-      if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
-        this.errorMessage = 'Invalid email address.'
-        return
-      }
+      // if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
+      //   this.errorMessage = 'Invalid email address.'
+      //   return
+      // }
       if(this.createFlag === false){
-        this.data.logo = url
-        $('#loading').css({display: 'block'})
-        this.APIRequest('merchants/update', this.data).then(response => {
-          if(response.data === true){
-            this.retrieve()
-            this.successMessage = 'Successfully Updated!'
-            this.errorMessage = null
-          }else{
-            this.successMessage = null
-            this.errorMessage = 'Unable to Update! Please contact the administrator.'
-          }
-        })
+        if(this.data.name !== this.temp.name || this.data.email !== this.temp.email || this.data.business_code !== this.temp.business_code || this.data.prefix !== this.temp.prefix || this.data.website !== this.temp.website) {
+          this.data.logo = url
+          $('#loading').css({display: 'block'})
+          this.APIRequest('merchants/update', this.data).then(response => {
+            if(response.data === true){
+              this.retrieve()
+              this.successMessage = 'Successfully Updated!'
+              this.errorMessage = null
+            }else{
+              this.successMessage = null
+              this.errorMessage = 'Unable to Update! Please contact the administrator.'
+            }
+          })
+        } else {
+          this.successMessage = 'You did not change anything!'
+        }
       }else{
         this.create(url)
       }
