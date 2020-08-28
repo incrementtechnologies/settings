@@ -3,20 +3,19 @@
     <span class="header">Email</span>
     <span class="content">
       <span class="inputs">
-        <div class="item" style="margin-top: 25px;" v-for="(item, index) in options" :key="index" v-if="common.notificationSeting[index].flag === true">
-          <span class="details">
-            <label class="title">{{item.title}}</label>
-            <label class="definition">{{item.description}}</label>
-          </span>
-          <span class="icon" v-if="data !== null && item.column !== 'email_pin'">
-            <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data[item.column]) === 1" @click="update(data.id, item.column, 0)"></i>
-            <i class="fa fa-toggle-off text-danger action-link" v-if="parseInt(data[item.column]) === 0" @click="update(data.id, item.column, 1)"></i>
-          </span>
-          <span class="icon" v-if="item.column === 'email_pin'">
-            <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data[item.column]) === 1"></i>
-          </span>
-          <span class="icon" v-if="data === null && item.column !== 'email_pin'">
-            <i class="fa fa-toggle-off text-danger action-link" @click="create(item.column)"></i>
+        <div class="item" style="margin-top: 25px;" v-for="(item, index) in options" :key="index" >
+          <span v-if="common.notificationSeting[index].flag === true">
+            <span class="details">
+              <label class="title">{{item.title}}</label>
+              <label class="definition">{{item.description}}</label>
+            </span>
+            <span class="icon" v-if="data !== null">
+              <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data[item.column]) === 1" @click="update(data.id, item.column, 0)"></i>
+              <i class="fa fa-toggle-off text-danger action-link"  v-if="parseInt(data[item.column]) === 0" @click="update(data.id, item.column, 1)"></i>
+            </span>
+            <span class="icon" v-if="data === null">
+              <i class="fa fa-toggle-off text-danger action-link" @click="create(item.column)"></i>
+            </span> 
           </span>
         </div>
       </span>
