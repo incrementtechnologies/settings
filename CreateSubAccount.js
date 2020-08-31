@@ -47,7 +47,7 @@ export default {
     type: 'input',
     inputType: 'password',
     validation: {
-      size: 5,
+      size: 8,
       type: 'text'
     }
   }, {
