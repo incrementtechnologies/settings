@@ -161,7 +161,7 @@ export default {
               data.disabled = true
             }
             if(data.variable === 'password'){
-              data.value = '*****'
+              data.value = '********'
               data.disabled = true
             }
           })
