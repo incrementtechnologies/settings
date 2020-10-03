@@ -1,6 +1,12 @@
 <template>
   <div class="holder">
     <button class="btn btn-primary pull-right" style="margin-bottom: 10px;" @click="showModal('create')">Add Account</button>
+    <filter-product v-bind:category="category" 
+      :activeCategoryIndex="0"
+      :activeSortingIndex="0"
+      @changeSortEvent="retrieve($event.sort, $event.filter)"
+      :grid="['list']">
+    </filter-product>
     <table class="table table-bordered table-responsive" v-if="data !== null">
       <thead>
         <tr>
@@ -54,7 +60,7 @@ import SubAccount from './CreateSubAccount.js'
 import Pager from 'src/components/increment/generic/pager/Pager.vue'
 export default {
   mounted(){
-    this.retrieve()
+    this.retrieve({'id': 'asc'}, {column: 'id', value: ''})
   },
   data(){
     return {
@@ -64,30 +70,79 @@ export default {
       createSubAccountModal: SubAccount,
       numPages: null,
       activePage: 1,
-      limit: 5
+      limit: 5,
+      category: [{
+        title: 'Sub-Accounts',
+        sorting: [{
+          title: 'Username ascending',
+          payload: 'username',
+          payload_value: 'asc',
+          type: 'text'
+        }, {
+          title: 'Username descending',
+          payload: 'username',
+          payload_value: 'desc',
+          type: 'text'
+        }, {
+          title: 'Email ascending',
+          payload: 'email',
+          payload_value: 'asc',
+          type: 'text'
+        }, {
+          title: 'Email descending',
+          payload: 'email',
+          payload_value: 'desc',
+          type: 'text'
+        }, {
+          title: 'Status ascending',
+          payload: 'T1.status',
+          payload_value: 'asc',
+          type: 'text'
+        }, {
+          title: 'Status descending',
+          payload: 'T1.status',
+          payload_value: 'desc',
+          type: 'text'
+        }]
+      }],
+      currentFilter: null,
+      currentSort: null
     }
   },
   components: {
+    'filter-product': require('components/increment/ecommerce/filter/Product.vue'),
     'empty': require('components/increment/generic/empty/EmptyDynamicIcon.vue'),
     'create-modal': require('components/increment/generic/modal/Modal.vue'),
     Pager
   },
   methods: {
-    retrieve(sort = null){
-      $('#loading').css({display: 'block'})
+    retrieve(sort, filter){
+      if(filter !== null){
+        this.currentFilter = filter
+      }
+      if(sort !== null){
+        this.currentSort = sort
+      }
       let parameter = {
         condition: [{
+          value: this.currentFilter.value + '%',
+          column: this.currentFilter.column,
+          clause: 'like'
+        }, {
           value: this.user.userID,
           column: 'account_id',
           clause: '='
         }],
         limit: this.limit,
+        sort: this.currentSort,
         offset: (this.activePage > 0) ? ((this.activePage - 1) * this.limit) : this.activePage
       }
+      $('#loading').css({display: 'block'})
       this.APIRequest('sub_accounts/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data
+          console.log(this.data)
           this.numPages = parseInt(response.size / this.limit) + (response.size % this.limit ? 1 : 0)
         }else{
           this.data = null
