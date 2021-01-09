@@ -175,7 +175,6 @@ export default {
       })
     },
     update(id, type, value){
-      console.log(id, type, value)
       let parameter = null
       switch(type){
         case 'payload_value': parameter = {
@@ -187,7 +186,6 @@ export default {
       this.updateRequest(parameter)
     },
     updateRequest(parameter){
-      console.log(parameter)
       $('#loading').css({display: 'block'})
       this.APIRequest('payloads/update', parameter).then(response => {
         this.retrieve()

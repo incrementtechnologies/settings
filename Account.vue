@@ -32,15 +32,25 @@
         {{successMessagePassword}}
       </span>
       <span class="inputs">
-        <div class="form-group" style="margin-top: 25px;">
-          <label for="address">New Password</label>
-          <input type="password" class="form-control" placeholder="*********" v-model="newPassword">
+        <br>  
+        <label for="address">New Password</label>
+        <div class="input-group">
+          <input class="form-control" :type="visibility" placeholder="*********" v-model="newPassword" style="border-right-style: none;">
+          <span style="background: white;" class="input-group-addon">
+            <i v-if="visibility == 'password'" @click="showPassword('password')" class="fa fa-eye" aria-hidden="true"></i>
+            <i v-if="visibility == 'text'" @click="hidePassword('password')" class="fa fa-eye-slash" aria-hidden="true"></i>
+          </span>
         </div>
-
-        <div class="form-group" style="margin-top: 25px;">
-          <label for="address">Confirm New Password</label>
-          <input type="password" class="form-control" placeholder="*********" v-model="newCPassword">
+        <br>
+        <label for="address">Confirm New Password</label>
+        <div class="input-group">
+            <input v-on:keyup="validate('cpassword')" :type="visibilityC" class="form-control" style="border-right-style: none;" placeholder="*********" v-model="newCPassword">
+            <span style="background: white;" class="input-group-addon">
+              <i v-if="visibilityC == 'password'" @click="showPassword('cpassword')" class="fa fa-eye" aria-hidden="true"></i>
+              <i v-if="visibilityC == 'text'" @click="hidePassword('cpassword')" class="fa fa-eye-slash" aria-hidden="true"></i>
+            </span>
         </div>
+        <br>
         <button class="btn btn-primary" style="margin-bottom: 25px;" @click="updatePassword()">Update</button>
       </span>
       <span class="sidebar">
@@ -68,6 +78,17 @@
   </div>
 </template>
 <style scoped>
+.input-group-addon{
+  width: 10% !important;
+  text-align: center !important;
+  padding: 0px !important;
+  display: block !important;
+  line-height: 30px !important;
+}
+.input-group{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 .account-holder{
   width: 95%;
   float: left;
@@ -172,6 +193,7 @@ import COMMON from 'src/common.js'
 export default {
   mounted(){
     this.email = this.user.email
+    this.tempEmail = this.user.email
   },
   data(){
     return {
@@ -188,10 +210,27 @@ export default {
       successMessagePassword: null,
       successMessageType: null,
       email: null,
-      common: COMMON
+      common: COMMON,
+      visibility: 'password',
+      visibilityC: 'password',
+      tempEmail: null
     }
   },
   methods: {
+    showPassword(pass) {
+      if(pass === 'password'){
+        this.visibility = 'text'
+      } else {
+        this.visibilityC = 'text'
+      }
+    },
+    hidePassword(pass) {
+      if(pass === 'cpassword'){
+        this.visibilityC = 'password'
+      } else {
+        this.visibility = 'password'
+      }
+    },
     initMessages(){
       this.successMessageEmail = null
       this.successMessagePassword = null
@@ -246,17 +285,21 @@ export default {
           'id': this.user.userID,
           'email': this.email
         }
-        $('#loading').css({'display': 'block'})
-        this.APIRequest('accounts/update_email', parameter).then(response => {
-          $('#loading').css({display: 'none'})
-          if(response.data === true){
-            this.errorMessageEmail = null
-            AUTH.checkAuthentication(null)
-            this.successMessageEmail = 'Successfully updated!'
-          }else{
-            this.errorMessageEmail = response.error
-          }
-        })
+        if(this.tempEmail !== this.email) {
+          $('#loading').css({'display': 'block'})
+          this.APIRequest('accounts/update_email', parameter).then(response => {
+            $('#loading').css({display: 'none'})
+            if(response.data === true){
+              this.errorMessageEmail = null
+              AUTH.checkAuthentication(null)
+              this.successMessageEmail = 'Successfully updated!'
+            }else{
+              this.errorMessageEmail = response.error
+            }
+          })
+        } else {
+          this.errorMessageEmail = 'Email not changed.'
+        }
       }else{
         this.errorMessageEmail = 'Please fill up all the required fields.'
       }
