@@ -1,17 +1,18 @@
 <template>
   <div class="notification-holder">
-    <span class="header">Email</span>
+    <span class="header">Broadcasting</span>
     <span class="content">
       <span class="inputs">
         <div class="item" style="margin-top: 25px;" v-for="(item, index) in options" :key="index" >
-          <span v-if="common.notificationSeting[index].flag === true">
+          <span v-if="common.broadcastSetting[index].flag === true">
             <span class="details">
               <label class="title">{{item.title}}</label>
-              <label class="definition">{{item.description}}</label>
+              <label v-if="value === 'manual'" class="definition">Turn on auto broadcast to automatically send orders to riders once accepted.</label>
+              <label v-if="value === 'auto'" class="definition">Turn off auto broadcast to manually send trigger the broadcast orders to riders once accepted.</label>
             </span>
             <span class="icon" v-if="data !== null">
-              <i class="fa fa-toggle-on text-primary action-link" v-if="parseInt(data[item.column]) === 1" @click="update(data.id, item.column, 0)"></i>
-              <i class="fa fa-toggle-off text-danger action-link"  v-if="parseInt(data[item.column]) === 0" @click="update(data.id, item.column, 1)"></i>
+              <i class="fa fa-toggle-on text-primary action-link" v-if="data[item.column] === 'auto' " @click="update(data.id, item.column, 'manual')"></i>
+              <i class="fa fa-toggle-off text-danger action-link"  v-if="data[item.column] === 'manual'" @click="update(data.id, item.column, 'auto')"></i>
             </span>
             <span class="icon" v-if="data === null">
               <i class="fa fa-toggle-off text-danger action-link" @click="create(item.column)"></i>
@@ -134,18 +135,10 @@ export default {
       tokenData: AUTH.tokenData,
       config: CONFIG,
       data: null,
+      value: 'manual',
       options: [{
-        title: 'Login',
-        description: 'Send me an email everytime there\'s a login with my account.',
-        column: 'email_login'
-      }, {
-        title: 'One Time Password(OTP)',
-        description: 'Enable OTP everytime there\'s a login with my account.',
-        column: 'email_otp'
-      }, {
-        title: 'Account PIN',
-        description: 'Receive new PIN from email everytime there\'s a login with my account.',
-        column: 'email_pin'
+        title: 'Broadcasting',
+        column: 'payload_value'
       }],
       common: COMMON
     }
@@ -160,10 +153,11 @@ export default {
         }]
       }
       $('#loading').css({display: 'block'})
-      this.APIRequest('notification_settings/retrieve', parameter).then(response => {
+      this.APIRequest('payloads/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
+          this.value = response.data[0].payload_value
         }else{
           this.data = null
         }
@@ -172,51 +166,30 @@ export default {
     create(type){
       let parameter = {
         account_id: this.user.userID,
-        email_login: (type === 'email_login') ? 1 : 0,
-        email_otp: (type === 'email_otp') ? 1 : 0,
-        email_pin: (type === 'email_pin') ? 1 : 0,
-        sms_login: (type === 'sms_login') ? 1 : 0,
-        sms_otp: (type === 'sms_otp') ? 1 : 0
+        payload: 'broadcast',
+        payload_value: 'auto'
       }
       $('#loading').css({display: 'block'})
-      this.APIRequest('notification_settings/create', parameter).then(response => {
+      this.APIRequest('payloads/create', parameter).then(response => {
         this.retrieve()
       })
     },
     update(id, type, value){
+      console.log(id, type, value)
       let parameter = null
       switch(type){
-        case 'email_login': parameter = {
+        case 'payload_value': parameter = {
           id: id,
-          email_login: value
-        }
-          break
-        case 'email_otp': parameter = {
-          id: id,
-          email_otp: value
-        }
-          break
-        case 'email_pin': parameter = {
-          id: id,
-          email_pin: value
-        }
-          break
-        case 'sms_login': parameter = {
-          id: id,
-          sms_login: value
-        }
-          break
-        case 'sms_otp': parameter = {
-          id: id,
-          sms_otp: value
+          payload_value: value
         }
           break
       }
       this.updateRequest(parameter)
     },
     updateRequest(parameter){
+      console.log(parameter)
       $('#loading').css({display: 'block'})
-      this.APIRequest('notification_settings/update', parameter).then(response => {
+      this.APIRequest('payloads/update', parameter).then(response => {
         this.retrieve()
       })
     }
