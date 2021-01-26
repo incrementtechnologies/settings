@@ -140,8 +140,9 @@ export default {
       $('#loading').css({display: 'block'})
       this.APIRequest('sub_accounts/retrieve_by_filter', parameter).then(response => {
         $('#loading').css({display: 'none'})
-        if(response.length > 0){
-          this.data = response
+        if(response.data.length > 0){
+          this.data = response.data
+          console.log(this.data)
           this.numPages = parseInt(response.size / this.limit) + (response.size % this.limit ? 1 : 0)
         }else{
           this.data = null
