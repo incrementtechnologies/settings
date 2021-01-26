@@ -22,9 +22,8 @@
           <td>{{item.account.email}}</td>
           <td>{{item.status}}</td>
           <td>
-            <label class="text-primary actions" @click="showModal('update', item)" v-if="user.userID !== item.account.id">EDIT</label> 
-            <b v-if="user.userID !== item.account.id">/</b> 
-            <label class="text-danger actions" @click="remove(item.id, item.account.id)" v-if="user.userID !== item.account.id">DELETE</label>
+            <button class="btn btn-primary" @click="showModal('update', item)" v-if="user.userID !== item.account.id">EDIT</button>
+            <button class="btn btn-danger" @click="remove(item.id, item.account.id)" v-if="user.userID !== item.account.id">DELETE</button>
           </td>
         </tr>
       </tbody>
@@ -236,7 +235,7 @@ export default {
         }
         this.APIRequest('accounts/delete', parameterAccount).then(response => {
           $('#loading').css({display: 'none'})
-          this.retrieve()
+          this.retrieve({'id': 'asc'}, {column: 'id', value: ''})
         })
       })
     }
