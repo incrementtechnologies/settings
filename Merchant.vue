@@ -169,7 +169,8 @@ export default {
       business_code: this.data.business_code,
       address: this.data.address,
       prefix: this.data.prefix,
-      website: this.data.website
+      website: this.data.website,
+      logo: this.data.logo
     }
   },
   data(){
@@ -237,9 +238,11 @@ export default {
       //   this.errorMessage = 'Invalid email address.'
       //   return
       // }
+      if(url) {
+        this.data.logo = url
+      }
       if(this.createFlag === false){
-        if(this.data.name !== this.temp.name || this.data.email !== this.temp.email || this.data.business_code !== this.temp.business_code || this.data.prefix !== this.temp.prefix || this.data.website !== this.temp.website) {
-          this.data.logo = url
+        if(this.data.name !== this.temp.name || this.data.email !== this.temp.email || this.data.business_code !== this.temp.business_code || this.data.prefix !== this.temp.prefix || this.data.website !== this.temp.website || this.data.logo !== this.temp.logo) {
           $('#loading').css({display: 'block'})
           this.APIRequest('merchants/update', this.data).then(response => {
             if(response.data === true){
