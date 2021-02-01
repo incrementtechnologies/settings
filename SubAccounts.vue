@@ -35,7 +35,7 @@
       v-if="data !== null"
     />
     <empty v-if="data === null" :title="'No accounts yet!'" :action="'Please add new account.'" :icon="'far fa-smile'" :iconColor="'text-primary'"></empty>
-    <create-modal :property="createSubAccountModal"></create-modal>
+    <create-modal ref="modal" :property="createSubAccountModal"></create-modal>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -150,6 +150,7 @@ export default {
       })
     },
     showModal(action, item = null){
+      this.$refs.modal.errorMessage = null
       switch(action){
         case 'create':
           this.createSubAccountModal = {...SubAccount}
