@@ -56,7 +56,7 @@
       <span class="sidebar">
         <span class="sidebar-header" style="margin-top: 25px; font-weight: bold;">Profile Picture</span>
         <span class="image" v-if="user.profile !== null" >
-          <img :src="config.BACKEND_URL + user.profile.url" height="auto" width="100%" >
+          <img :src="config.BACKEND_URL + user.profile.url" style="background-size: cover;"  height="200px" width="200px" >
         </span>
         <span class="image" v-else  style="border: 2px solid gray; border-radius: 5px;">
           <i class="far fa-user-circle profile-icon"></i>
