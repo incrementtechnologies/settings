@@ -23,7 +23,7 @@
           <td>{{item.status}}</td>
           <td>
             <button class="btn btn-primary" @click="showModal('update', item)" v-if="user.userID !== item.account.id">EDIT</button>
-            <button class="btn btn-danger" @click="remove(item.id, item.account.id)" v-if="user.userID !== item.account.id">DELETE</button>
+            <button class="btn btn-danger" @click="confirmDelete(item.id, item.account.id)" v-if="user.userID !== item.account.id">DELETE</button>
           </td>
         </tr>
       </tbody>
@@ -34,6 +34,13 @@
       :limit="limit"
       v-if="data !== null"
     />
+    <confirmation
+    :title="'Confirmation Modal'"
+    :message="'Are you sure you want to delete ?'"
+    ref="confirms"
+    @onConfirm="remove()"
+    >
+    </confirmation>
     <empty v-if="data === null" :title="'No accounts yet!'" :action="'Please add new account.'" :icon="'far fa-smile'" :iconColor="'text-primary'"></empty>
     <create-modal ref="modal" :property="createSubAccountModal"></create-modal>
   </div>
@@ -105,16 +112,24 @@ export default {
         }]
       }],
       currentFilter: null,
-      currentSort: null
+      currentSort: null,
+      subId: null,
+      accountId: null
     }
   },
   components: {
     'filter-product': require('components/increment/ecommerce/filter/Product.vue'),
     'empty': require('components/increment/generic/empty/EmptyDynamicIcon.vue'),
     'create-modal': require('components/increment/generic/modal/Modal.vue'),
+    'confirmation': require('components/increment/generic/modal/Confirmation.vue'),
     Pager
   },
   methods: {
+    confirmDelete(subId, accountId) {
+      this.subId = subId
+      this.accountId = accountId
+      $('#connectionError').modal('show')
+    },
     retrieve(sort, filter){
       if(filter !== null){
         this.currentFilter = filter
@@ -181,6 +196,7 @@ export default {
           }]
           break
         case 'update':
+          this.$refs.modal.errorMessage = null
           let modalData = {...this.createSubAccountModal}
           let parameter = {
             title: 'Update Sub Account',
@@ -212,6 +228,7 @@ export default {
               data.disabled = true
             }
             if(data.variable === 'email'){
+              data.validation.flag = true
               data.value = item.account.email
               data.disabled = true
             }
@@ -225,14 +242,14 @@ export default {
       }
       $('#createSubAccountModal').modal('show')
     },
-    remove(subId, accountId){
+    remove(){
       let parameter = {
-        id: subId
+        id: this.subId
       }
       $('#loading').css({display: 'block'})
       this.APIRequest('sub_accounts/delete', parameter).then(response => {
         let parameterAccount = {
-          id: accountId
+          id: this.accountId
         }
         this.APIRequest('accounts/delete', parameterAccount).then(response => {
           $('#loading').css({display: 'none'})
