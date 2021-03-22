@@ -21,7 +21,8 @@
       <account v-if="activeType === 'account'"></account>
       <payment v-if="activeType === 'payment_method'"></payment>
       <billing-information v-if="activeType === 'billing_information'"></billing-information>
-      <merchant v-if="activeType === 'merchant'" :title="title" :allowed="allowed"></merchant>
+      <merchant-with-schedule v-if="activeType === 'merchant' && allowed.includes('schedule') === true" :allowed="allowed" :title="title"></merchant-with-schedule>
+      <merchant v-if="activeType === 'merchant' && allowed.includes('schedule') === false" :allowed="allowed" :title="title"></merchant>
       <notification v-if="activeType === 'notification'"></notification>
     </div>
   </div>
@@ -141,6 +142,7 @@ export default {
     'profile': require('components/increment/settings/Profile.vue'),
     'account': require('components/increment/settings/Account.vue'),
     'payment': require('components/increment/settings/Payment.vue'),
+    'merchant-with-schedule': require('components/increment/settings/MerchantWithSchedule.vue'),
     'billing-information': require('components/increment/settings/BillingInformation.vue'),
     'merchant': require('components/increment/settings/Merchant.vue'),
     'notification': require('components/increment/settings/Notification.vue')
@@ -153,6 +155,8 @@ export default {
       this.allowed = params.allowed
       this.activeType = params.type
       this.title = params.title
+      console.log('lalaine')
+      console.log(this.allowed.includes('schedule'))
     }
   }
 }
