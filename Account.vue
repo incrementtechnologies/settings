@@ -16,9 +16,9 @@
 
         <div class="form-group" style="margin-top: 25px;">
           <label for="address">Email Address</label>
-          <input type="text" class="form-control" placeholder="Enter First Name" v-model="email" :disabled="user.subAccount.status !== 'ADMIN'">
+          <input type="text" class="form-control" placeholder="Enter First Name" v-model="email" :disabled="user.type !== 'ADMIN'">
         </div>
-        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="updateEmail()" v-if="user.subAccount.status === 'ADMIN'">Update Email</button>
+        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="updateEmail()" v-if="user.type === 'ADMIN'">Update Email</button>
       </span>
       <span class="sidebar">
       </span>
@@ -56,7 +56,7 @@
       <span class="sidebar">
       </span>
     </span>
-    <div v-if="(user.subAccount === null || (user.subAccount !== null && user.subAccount.status === 'ADMIN')) && common.USER_TYPE_SETTING === true">
+    <div v-if="(user.subAccount === null || (user.subAccount !== null && user.type === 'ADMIN')) && common.USER_TYPE_SETTING === true">
       <span class="header">Account Type</span>
       <span class="content">
         <span class="error text-danger" v-if="errorMessageType !== null">
