@@ -36,7 +36,7 @@
     />
     <confirmation
     :title="'Confirmation Modal'"
-    :message="'Are you sure you want to delete ?'"
+    :message="'Are you sure you want to delete sub-account?'"
     ref="confirms"
     @onConfirm="remove()"
     >
