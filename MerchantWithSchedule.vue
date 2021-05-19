@@ -30,9 +30,9 @@
           <input type="text" class="form-control" placeholder="Business Address" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
-        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('prefix') > -1">
-          <label for="address">Prefix</label>
-          <input type="text" class="form-control" placeholder="Invoice Prefix eq. IDF" v-model="data.prefix" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('information') > -1">
+          <label for="address">Information</label>
+          <input type="text" class="form-control" placeholder="Information" v-model="data.addition_informations" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
