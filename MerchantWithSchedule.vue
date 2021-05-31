@@ -35,14 +35,32 @@
           <input type="text" class="form-control" placeholder="Information" v-model="data.addition_informations" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
-        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
+        <!-- <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
           <label for="address">Website</label>
           <input type="text" class="form-control" placeholder="Company website url" v-model="data.website" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
-        </div>
+        </div> -->
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('schedule') > -1">
           <label for="address">Schedule</label>
-          <input type="datetime-local" class="form-control" placeholder="Company website url" v-model="data.schedule" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input class="form-control" placeholder="Schedule" v-model="days" disabled><br>
+          <button class="btn btn-secondary" v-if="!showSched" style="margin-bottom: 10px;" @click="showSched = true">Update Schedule</button>
+          <button class="btn btn-danger" v-if="showSched" style="margin-bottom: 10px;" @click="showSched = false">Cancel</button>
+          <button class="btn btn-secondary" v-if="showSched" style="margin-bottom: 10px;" @click="showSched = false, updateSchedule()">Confirm Update</button>
+          <div v-if="showSched" style="width: 100%;">
+            <div class="row" v-for="(item, index) in scheduleDays" :key="index" style="padding: 5px;">
+              <div class="column" style="width: 25%;">
+                <input type="checkbox" :value="item.value" v-model="days">
+                <label for="monday"> {{item.value}}</label>
+              </div>
+              <div class="column">
+                <span>
+                <vue-timepicker format="HH:mm" v-model="item.startTime" @change="changeHandler"></vue-timepicker>
+                <label for="monday"> - </label>
+                <vue-timepicker format="HH:mm" v-model="item.endTime" @change="changeHandler"></vue-timepicker>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
         
         <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button>
@@ -164,6 +182,7 @@ import ROUTER from 'src/router'
 import AUTH from 'src/services/auth'
 import axios from 'axios'
 import CONFIG from 'src/config.js'
+import VueTimepicker from 'vue2-timepicker/src/vue-timepicker.vue'
 export default {
   mounted(){
     $('#loading').css({display: 'block'})
@@ -206,14 +225,71 @@ export default {
         address: null,
         prefix: null,
         website: null
-      }
+      },
+      showSched: false,
+      days: [],
+      scheduleDays: [
+        {
+          value: 'Monday',
+          startTime: null,
+          endTime: null
+        },
+        {
+          value: 'Tuesday',
+          startTime: null,
+          endTime: null
+        },
+        {
+          value: 'Wednesday',
+          startTime: null,
+          endTime: null
+        },
+        {
+          value: 'Thursday',
+          startTime: null,
+          endTime: null
+        },
+        {
+          value: 'Friday',
+          startTime: null,
+          endTime: null
+        },
+        {
+          value: 'Saturday',
+          startTime: null,
+          endTime: null
+        },
+        {
+          value: 'Sunday',
+          startTime: null,
+          endTime: null
+        }
+      ]
     }
   },
   props: ['title', 'allowed'],
   components: {
-    'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue')
+    'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue'),
+    VueTimepicker
   },
   methods: {
+    changeHandler(event) {
+      var date = new Date()
+      date.setHours(event.data.hh, event.data.mm, 0)
+      var date2 = new Date()
+      date2.setHours(event.data.hh, event.data.mm, 0)
+      console.log(date > date2, date, date2)
+    },
+    updateSchedule() {
+      this.data.schedule = this.scheduleDays
+      this.scheduleDays.forEach((item, index) => {
+        this.days.forEach(element => {
+          if(item.value !== element) {
+            this.data.schedule.splice(index, 1)
+          }
+        })
+      })
+    },
     retrieve(){
       if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
         $('#loading').css({display: 'none'})
