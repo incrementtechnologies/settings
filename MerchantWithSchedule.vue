@@ -264,7 +264,8 @@ export default {
           startTime: null,
           endTime: null
         }
-      ]
+      ],
+      scheds: []
     }
   },
   props: ['title', 'allowed'],
@@ -278,17 +279,19 @@ export default {
       date.setHours(event.data.hh, event.data.mm, 0)
       var date2 = new Date()
       date2.setHours(event.data.hh, event.data.mm, 0)
-      console.log(date > date2, date, date2)
     },
     updateSchedule() {
-      this.data.schedule = this.scheduleDays
-      this.scheduleDays.forEach((item, index) => {
+      let schedule = this.scheduleDays
+      this.schedule.forEach((item, index) => {
         this.days.forEach(element => {
           if(item.value !== element) {
-            this.data.schedule.splice(index, 1)
+            schedule.splice(index, 1)
           }
         })
       })
+      this.data.schedule = {
+        schedule: schedule
+      }
     },
     retrieve(){
       if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
@@ -306,6 +309,19 @@ export default {
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
+          if(response.data[0].schedule) {
+            response.data[0].schedule = JSON.parse(response.data[0].schedule)
+            let sched = response.data[0].schedule.schedule
+            sched.forEach(e => {
+              this.scheduleDays.forEach(i => {
+                if(e.value === i.value) {
+                  console.log(e.startTime)
+                  this.days.push(i.value)
+                  i = e
+                }
+              })
+            })
+          }
           this.data = response.data[0]
           this.createFlag = false
         }else{
@@ -325,6 +341,7 @@ export default {
       if(this.createFlag === false){
         if(this.data.name !== this.temp.name || this.data.email !== this.temp.email || this.data.business_code !== this.temp.business_code || this.data.prefix !== this.temp.prefix || this.data.website !== this.temp.website || this.data.logo !== this.temp.logo || this.data.schedule !== this.temp.schedule) {
           $('#loading').css({display: 'block'})
+          this.data.schedule = JSON.stringify(this.data.schedule)
           this.APIRequest('merchants/update', this.data).then(response => {
             if(response.data === true){
               this.retrieve()
