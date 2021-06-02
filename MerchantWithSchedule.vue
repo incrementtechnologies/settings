@@ -53,10 +53,11 @@
                 <label for="monday"> {{item.value}}</label>
               </div>
               <div class="column">
+                <p style="color: red;" v-if="item.status">Invalid time</p>
                 <span>
-                <vue-timepicker format="HH:mm" v-model="item.startTime" @change="changeHandler"></vue-timepicker>
-                <label for="monday"> - </label>
-                <vue-timepicker format="HH:mm" v-model="item.endTime" @change="changeHandler"></vue-timepicker>
+                <vue-timepicker format="HH:mm" placeholder="Start Time" v-model="item.startTime" :value="item.startTime" @change="changeHandler(item)"></vue-timepicker>
+                <label for="monday"> - </label>  
+                <vue-timepicker format="HH:mm" placeholder="End Time" v-model="item.endTime" :value="item.endTime" @change="changeHandler(item)"></vue-timepicker>
                 </span>
               </div>
             </div>
@@ -264,8 +265,7 @@ export default {
           startTime: null,
           endTime: null
         }
-      ],
-      scheds: []
+      ]
     }
   },
   props: ['title', 'allowed'],
@@ -274,15 +274,18 @@ export default {
     VueTimepicker
   },
   methods: {
-    changeHandler(event) {
-      var date = new Date()
-      date.setHours(event.data.hh, event.data.mm, 0)
-      var date2 = new Date()
-      date2.setHours(event.data.hh, event.data.mm, 0)
+    changeHandler(item) {
+      if(item.startTime && item.endTime) {
+        var date = new Date()
+        date.setHours(item.startTime.HH, item.startTime.mm, 0)
+        var date2 = new Date()
+        date2.setHours(item.endTime.HH, item.endTime.mm, 0)
+        item.status = date.getTime() > date2.getTime()
+      }
     },
     updateSchedule() {
       let schedule = this.scheduleDays
-      this.schedule.forEach((item, index) => {
+      schedule.forEach((item, index) => {
         this.days.forEach(element => {
           if(item.value !== element) {
             schedule.splice(index, 1)
@@ -308,20 +311,23 @@ export default {
       }
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
+        let days = []
         if(response.data.length > 0){
           if(response.data[0].schedule) {
             response.data[0].schedule = JSON.parse(response.data[0].schedule)
             let sched = response.data[0].schedule.schedule
-            sched.forEach(e => {
-              this.scheduleDays.forEach(i => {
+            sched.forEach((e, indexs) => {
+              this.scheduleDays.forEach((i, index) => {
                 if(e.value === i.value) {
-                  console.log(e.startTime)
-                  this.days.push(i.value)
-                  i = e
+                  days.push(i.value)
+                  i.value = e.value
+                  i.startTime = e.startTime
+                  i.endTime = e.endTime
                 }
               })
             })
           }
+          this.days = days
           this.data = response.data[0]
           this.createFlag = false
         }else{
