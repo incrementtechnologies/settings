@@ -265,7 +265,8 @@ export default {
           startTime: null,
           endTime: null
         }
-      ]
+      ],
+      test: null
     }
   },
   props: ['title', 'allowed'],
@@ -314,15 +315,18 @@ export default {
         let days = []
         if(response.data.length > 0){
           if(response.data[0].schedule) {
-            response.data[0].schedule = JSON.parse(response.data[0].schedule)
-            let sched = response.data[0].schedule.schedule
-            sched.forEach((e, indexs) => {
+            let sched = JSON.parse(response.data[0].schedule)
+            if(typeof sched !== 'object') {
+              sched = JSON.parse(sched)
+            }
+            console.log(typeof sched, 'sched')
+            sched.schedule.forEach((e, indexs) => {
               this.scheduleDays.forEach((i, index) => {
                 if(e.value === i.value) {
                   days.push(i.value)
                   i.value = e.value
-                  i.startTime = e.startTime
-                  i.endTime = e.endTime
+                  i.startTime = e.startTime ? e.startTime : {HH: '00', mm: '00'}
+                  i.endTime = e.endTime ? e.endTime : {HH: '00', mm: '00'}
                 }
               })
             })
@@ -371,6 +375,7 @@ export default {
         this.errorMessage = 'Invalid email address.'
         return
       }
+      this.data.schedule = JSON.stringify(this.data.schedule)
       this.APIRequest('merchants/create', this.data).then(response => {
         if(response.data > 0){
           this.retrieve()
