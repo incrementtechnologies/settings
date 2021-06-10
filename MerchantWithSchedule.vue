@@ -69,7 +69,7 @@
       <span class="sidebar" v-if="createFlag === false">
         <span class="sidebar-header" style="margin-top: 25px;">Business Logo</span>
         <span class="image" v-if="data.logo !== null">
-          <img :src="config.BACKEND_URL + data.logo" height="auto" width="100%" >
+          <img :src="config.BACKEND_URL + data.logo" height="200px" width="100%" >
         </span>
         <span class="image" v-else>
           <i class="fa fa-image" ></i>
@@ -286,6 +286,7 @@ export default {
     },
     updateSchedule() {
       let schedule = this.scheduleDays
+      console.log(schedule, 'test')
       schedule.forEach((item, index) => {
         this.days.forEach(element => {
           if(item.value !== element) {
@@ -293,9 +294,14 @@ export default {
           }
         })
       })
-      this.data.schedule = {
-        schedule: schedule
+      if(this.days.length > 0) {
+        this.data.schedule = {
+          schedule: schedule
+        }
+      } else {
+        this.data.schedule = 'NULL'
       }
+      console.log(this.data)
     },
     retrieve(){
       if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
@@ -313,8 +319,9 @@ export default {
       this.APIRequest('merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         let days = []
+        // this.APIRequest('merchants/update', {id: response.data[0].id, schedule: 'NULL'}).then(response => {})
         if(response.data.length > 0){
-          if(response.data[0].schedule) {
+          if(response.data[0].schedule && response.data[0].schedule !== 'NULL') {
             let sched = JSON.parse(response.data[0].schedule)
             if(typeof sched !== 'object') {
               sched = JSON.parse(sched)
@@ -322,11 +329,11 @@ export default {
             console.log(typeof sched, 'sched')
             sched.schedule.forEach((e, indexs) => {
               this.scheduleDays.forEach((i, index) => {
-                if(e.value === i.value) {
+                if(e.value === i.value && e.startTime !== null && e.endTime !== null) {
                   days.push(i.value)
                   i.value = e.value
-                  i.startTime = e.startTime ? e.startTime : {HH: '00', mm: '00'}
-                  i.endTime = e.endTime ? e.endTime : {HH: '00', mm: '00'}
+                  i.startTime = e.startTime
+                  i.endTime = e.endTime
                 }
               })
             })
