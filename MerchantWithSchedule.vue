@@ -195,7 +195,8 @@ export default {
       address: this.data.address,
       prefix: this.data.prefix,
       website: this.data.website,
-      logo: this.data.logo
+      logo: this.data.logo,
+      schedule: this.data.schedule
     }
   },
   data(){
@@ -225,7 +226,8 @@ export default {
         business_code: null,
         address: null,
         prefix: null,
-        website: null
+        website: null,
+        schedule: null
       },
       showSched: false,
       days: [],
@@ -266,7 +268,8 @@ export default {
           endTime: null
         }
       ],
-      test: null
+      test: null,
+      original: null
     }
   },
   props: ['title', 'allowed'],
@@ -281,12 +284,12 @@ export default {
         date.setHours(item.startTime.HH, item.startTime.mm, 0)
         var date2 = new Date()
         date2.setHours(item.endTime.HH, item.endTime.mm, 0)
-        item.status = date.getTime() > date2.getTime()
+        item.status = date.getTime() >= date2.getTime()
       }
     },
     updateSchedule() {
+      this.original = this.scheduleDays
       let schedule = this.scheduleDays
-      console.log(schedule, 'test')
       schedule.forEach((item, index) => {
         this.days.forEach(element => {
           if(item.value !== element) {
@@ -301,7 +304,7 @@ export default {
       } else {
         this.data.schedule = 'NULL'
       }
-      console.log(this.data)
+      this.scheduleDays = this.original
     },
     retrieve(){
       if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
@@ -323,11 +326,10 @@ export default {
         if(response.data.length > 0){
           if(response.data[0].schedule && response.data[0].schedule !== 'NULL') {
             let sched = JSON.parse(response.data[0].schedule)
-            if(typeof sched !== 'object') {
+            if(sched !== 'NULL' && typeof sched !== 'object') {
               sched = JSON.parse(sched)
             }
-            console.log(typeof sched, 'sched')
-            sched.schedule.forEach((e, indexs) => {
+            sched && sched !== 'NULL' && sched.schedule.forEach((e, indexs) => {
               this.scheduleDays.forEach((i, index) => {
                 if(e.value === i.value && e.startTime !== null && e.endTime !== null) {
                   days.push(i.value)
@@ -360,8 +362,9 @@ export default {
           $('#loading').css({display: 'block'})
           this.data.schedule = JSON.stringify(this.data.schedule)
           this.APIRequest('merchants/update', this.data).then(response => {
+            $('#loading').css({display: 'none'})
             if(response.data === true){
-              this.retrieve()
+              // this.retrieve()
               this.successMessage = 'Successfully Updated!'
               this.errorMessage = null
             }else{
@@ -383,9 +386,11 @@ export default {
         return
       }
       this.data.schedule = JSON.stringify(this.data.schedule)
+      $('#loading').css({display: 'block'})
       this.APIRequest('merchants/create', this.data).then(response => {
+        $('#loading').css({display: 'none'})
         if(response.data > 0){
-          this.retrieve()
+          // this.retrieve()
           this.successMessage = 'Successfully Updated!'
           this.errorMessage = null
           AUTH.checkAuthentication(null, true)
