@@ -268,8 +268,7 @@ export default {
           endTime: null
         }
       ],
-      test: null,
-      original: null
+      test: null
     }
   },
   props: ['title', 'allowed'],
@@ -288,12 +287,11 @@ export default {
       }
     },
     updateSchedule() {
-      this.original = this.scheduleDays
-      let schedule = this.scheduleDays
-      schedule.forEach((item, index) => {
+      let schedule = []
+      this.scheduleDays.forEach((item, index) => {
         this.days.forEach(element => {
-          if(item.value !== element) {
-            schedule.splice(index, 1)
+          if(item.value === element) {
+            schedule.push(item)
           }
         })
       })
@@ -304,7 +302,6 @@ export default {
       } else {
         this.data.schedule = 'NULL'
       }
-      this.scheduleDays = this.original
     },
     retrieve(){
       if(AUTH.user.subAccount !== null && AUTH.user.subAccount.merchant !== null){
