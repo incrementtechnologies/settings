@@ -78,11 +78,14 @@
           <label v-if="data.status === 'not_verified'" class="text-grey"><i>Not verified</i></label>
           <label v-if="data.status === 'verified'" class="text-primary"><i>Verified</i></label>
         </span>
-        <button class="btn btn-primary custom-block" style="margin-top: 5px;" @click="showImages()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Select from images
+        <button class="btn btn-primary custom-block" style="margin-top: 5px; margin-bottom: 15px;" @click="showImages()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Select from images
+        </button>
+        <button class="btn btn-primary custom-block" style="margin-top: 5px; margin-bottom: 15px;" @click="showFeaturedImages()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Featured Images
         </button>
       </span>
     </span>
     <browse-images-modal :object="photoObject"></browse-images-modal>
+    <featured-images-modal :object="photoObject"></featured-images-modal>
   </div>
 </template>
 <style scoped>
@@ -188,6 +191,7 @@ export default {
   mounted(){
     $('#loading').css({display: 'block'})
     this.retrieve()
+    this.retrieveFeaturedPhotos()
     this.temp = {
       name: this.data.name,
       email: this.data.email,
@@ -268,15 +272,50 @@ export default {
           endTime: null
         }
       ],
-      test: null
+      test: null,
+      images: null
     }
   },
   props: ['title', 'allowed'],
   components: {
     'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue'),
+    'featured-images-modal': require('components/increment/settings/MerchantFeaturedPhotos.vue'),
     VueTimepicker
   },
   methods: {
+    removeImage(id){
+      let parameter = {
+        id: id
+      }
+      this.APIRequest('images/delete', parameter).then(response => {
+        this.retrieveFeaturedPhotos()
+        this.selectedImage = null
+      })
+    },
+    retrieveFeaturedPhotos(){
+      const parameter = {
+        condition: [{
+          value: this.user.userID,
+          column: 'account_id',
+          clause: '='
+        }, {
+          value: 'featured-photo',
+          column: 'category',
+          clause: '='
+        }],
+        sort: {
+          created_at: 'desc'
+        }
+      }
+      $('#loading').css({display: 'none'})
+      this.APIRequest('images/retrieve', parameter).done(response => {
+        $('#loading').css({display: 'none'})
+        console.log(response)
+        if(response.data.length > 0){
+          this.images = response.data
+        }
+      })
+    },
     changeHandler(item) {
       if(item.startTime && item.endTime) {
         var date = new Date()
@@ -396,6 +435,9 @@ export default {
           this.errorMessage = 'Unable to Update! Please contact the administrator.'
         }
       })
+    },
+    showFeaturedImages(){
+      $('#featuredImagesModal').modal('show')
     },
     updatePhoto(object){
       this.data.logo = object.url
