@@ -27,7 +27,8 @@
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('address') > -1">
           <label for="address">Business address <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Business Address" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <!-- <input type="text" class="form-control" placeholder="Business Address" v-model="data.address" :disabled="parseInt(data.account_id) !== parseInt(user.userID)"> -->
+          <location-merchant @onFinish="getResult($event)" :property="property"></location-merchant>
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('information') > -1">
@@ -273,16 +274,36 @@ export default {
         }
       ],
       test: null,
-      images: null
+      images: null,
+      property: {
+        value: null,
+        style: {
+          height: '45px !important'
+        },
+        GOOGLE_API_KEY: CONFIG.GOOGLE.API_KEY,
+        results: {
+          style: {
+          }
+        }
+      }
     }
   },
   props: ['title', 'allowed'],
   components: {
     'browse-images-modal': require('components/increment/generic/image/BrowseModal.vue'),
     'featured-images-modal': require('components/increment/settings/MerchantFeaturedPhotos.vue'),
+    'location-merchant': require('components/increment/settings/MerchantLocation.vue'),
     VueTimepicker
   },
   methods: {
+    getResult($event) {
+      let address = {
+        name: $event.formatted_address,
+        latitude: $event.latitude,
+        longitude: $event.longitude
+      }
+      this.data.address = address
+    },
     removeImage(id){
       let parameter = {
         id: id
@@ -360,6 +381,7 @@ export default {
         let days = []
         // this.APIRequest('merchants/update', {id: response.data[0].id, schedule: 'NULL'}).then(response => {})
         if(response.data.length > 0){
+          this.property.value = response.data[0].address
           if(response.data[0].schedule && response.data[0].schedule !== 'NULL') {
             let sched = JSON.parse(response.data[0].schedule)
             if(sched !== 'NULL' && typeof sched !== 'object') {
@@ -396,7 +418,12 @@ export default {
       if(this.createFlag === false){
         if(this.data.name !== this.temp.name || this.data.email !== this.temp.email || this.data.business_code !== this.temp.business_code || this.data.prefix !== this.temp.prefix || this.data.website !== this.temp.website || this.data.logo !== this.temp.logo || this.data.schedule !== this.temp.schedule) {
           $('#loading').css({display: 'block'})
-          this.data.schedule = JSON.stringify(this.data.schedule)
+          if(typeof this.data.schedule === 'object') {
+            this.data.schedule = JSON.stringify(this.data.schedule)
+          }
+          if(typeof this.data.address === 'object') {
+            this.data.address = JSON.stringify(this.data.address)
+          }
           this.APIRequest('merchants/update', this.data).then(response => {
             $('#loading').css({display: 'none'})
             if(response.data === true){
@@ -421,7 +448,12 @@ export default {
         this.errorMessage = 'Invalid email address.'
         return
       }
-      this.data.schedule = JSON.stringify(this.data.schedule)
+      if(typeof this.data.schedule === 'object') {
+        this.data.schedule = JSON.stringify(this.data.schedule)
+      }
+      if(typeof this.data.address === 'object') {
+        this.data.address = JSON.stringify(this.data.address)
+      }
       $('#loading').css({display: 'block'})
       this.APIRequest('merchants/create', this.data).then(response => {
         $('#loading').css({display: 'none'})
