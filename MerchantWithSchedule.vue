@@ -46,7 +46,7 @@
           <input class="form-control" placeholder="Schedule" v-model="days" disabled><br>
           <button class="btn btn-secondary" v-if="!showSched" style="margin-bottom: 10px;" @click="showSched = true">Update Schedule</button>
           <button class="btn btn-danger" v-if="showSched" style="margin-bottom: 10px;" @click="showSched = false">Cancel</button>
-          <button class="btn btn-secondary" v-if="showSched" style="margin-bottom: 10px;" @click="showSched = false, updateSchedule()">Confirm Update</button>
+          <button class="btn btn-secondary" v-if="showSched" :disabled="checkSchedule()" style="margin-bottom: 10px;" @click="showSched = false, updateSchedule()">Confirm Update</button>
           <div v-if="showSched" style="width: 100%;">
             <div class="row" v-for="(item, index) in scheduleDays" :key="index" style="padding: 5px;">
               <div class="column" style="width: 25%;">
@@ -54,7 +54,7 @@
                 <label for="monday"> {{item.value}}</label>
               </div>
               <div class="column">
-                <p style="color: red;" v-if="item.status">Invalid time</p>
+                <p style="color: red;" v-if="item.status && days.includes(item.value)">Invalid time</p>
                 <span>
                 <vue-timepicker format="HH:mm" placeholder="Start Time" v-model="item.startTime" :value="item.startTime" @change="changeHandler(item)"></vue-timepicker>
                 <label for="monday"> - </label>  
@@ -296,6 +296,15 @@ export default {
     VueTimepicker
   },
   methods: {
+    checkSchedule() {
+      let temp = false
+      this.scheduleDays.forEach(element => {
+        if(element.status) {
+          temp = true
+        }
+      })
+      return temp
+    },
     getResult($event) {
       let address = {
         name: $event.formatted_address,
@@ -343,7 +352,8 @@ export default {
         date.setHours(item.startTime.HH, item.startTime.mm, 0)
         var date2 = new Date()
         date2.setHours(item.endTime.HH, item.endTime.mm, 0)
-        item.status = date.getTime() >= date2.getTime()
+        item.status = (date.getTime() >= date2.getTime()) || (item.startTime.HH === '00' && item.startTime.mm === '00')
+        console.log(item.startTime.HH, 'test')
       }
     },
     updateSchedule() {
