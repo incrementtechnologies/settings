@@ -299,7 +299,7 @@ export default {
     checkSchedule() {
       let temp = false
       this.scheduleDays.forEach(element => {
-        if(element.status) {
+        if(element.status && this.days.includes(element.value)) {
           temp = true
         }
       })
@@ -404,6 +404,8 @@ export default {
                   i.value = e.value
                   i.startTime = e.startTime
                   i.endTime = e.endTime
+                } else if (e.value === i.value) {
+                  days.push(i.value)
                 }
               })
             })
