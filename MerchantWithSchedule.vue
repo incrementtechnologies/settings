@@ -468,7 +468,7 @@ export default {
       this.APIRequest('merchants/create', this.data).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data > 0){
-          // this.retrieve()
+          this.retrieve()
           this.successMessage = 'Successfully Updated!'
           this.errorMessage = null
           AUTH.checkAuthentication(null, true)
