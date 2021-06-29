@@ -12,17 +12,17 @@
 
         <div class="form-group">
           <label for="address">Business name <label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Business Name" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input type="text" class="form-control standard-height" placeholder="Business Name" v-model="data.name" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('email') > -1">
           <label for="address">Business email address<label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Business email address" v-model="data.email" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input type="text" class="form-control standard-height" placeholder="Business email address" v-model="data.email" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('code') > -1">
           <label for="address">ABN<label class="text-danger">*</label></label>
-          <input type="text" class="form-control" placeholder="Business code" v-model="data.business_code" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input type="text" class="form-control standard-height" placeholder="Business code" v-model="data.business_code" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
         </div>
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('address') > -1">
@@ -33,7 +33,18 @@
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('information') > -1">
           <label for="address">Information</label>
-          <input type="text" class="form-control" placeholder="Information" v-model="data.addition_informations" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <input type="text" class="form-control standard-height" placeholder="Information" v-model="info" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+        </div>
+
+        <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('information') > -1">
+          <label for="address">Cuisine</label>
+          <div class="row">
+          <div style="width: 60%;" class="form-control column mr-2">
+            <span  v-for="(item, index) in cuisineList" :key="index" class="mr-1"><b-badge><h6>{{item}}<i class="fas fa-times ml-1" @click="removeCuisine(index)" style="font-size: 11px; color: #a62e2e;"></i></h6></b-badge></span>
+          </div>
+          <input type="text" style="width: 30%;" class="form-control column mr-2" placeholder="Cuisine" v-model="cuisine" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">
+          <button class="btn btn-primary column" @click="addCuisine()" :disabled="parseInt(data.account_id) !== parseInt(user.userID)">Add</button>
+          </div>
         </div>
 
         <!-- <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('website') > -1">
@@ -43,11 +54,11 @@
 
         <div class="form-group" style="margin-top: 25px;" v-if="allowed.indexOf('schedule') > -1">
           <label for="address">Schedule</label>
-          <input class="form-control" placeholder="Schedule" v-model="days" disabled><br>
-          <button class="btn btn-secondary" v-if="!showSched" style="margin-bottom: 10px;" @click="showSched = true">Update Schedule</button>
-          <button class="btn btn-danger" v-if="showSched" style="margin-bottom: 10px;" @click="showSched = false">Cancel</button>
-          <button class="btn btn-secondary" v-if="showSched" :disabled="checkSchedule()" style="margin-bottom: 10px;" @click="showSched = false, updateSchedule()">Confirm Update</button>
-          <div v-if="showSched" style="width: 100%;">
+          <input class="form-control standard-height" placeholder="Schedule" v-model="days" disabled><br>
+          <button class="btn btn-secondary pull-right" v-if="!showSched" style="margin-right: 5px;" @click="showSched = true">Update Schedule</button>
+          <button class="btn btn-danger pull-right" v-if="showSched" style="margin-right: 5px;" @click="showSched = false">Cancel</button>
+          <button class="btn btn-secondary pull-right" v-if="showSched" :disabled="checkSchedule()" style="margin-right: 5px;" @click="showSched = false, updateSchedule()">Confirm Update</button>
+          <div v-if="showSched" style="width: 100%; margin-top: 40px; margin-bottom: 30px; padding-bottom: 90px;">
             <div class="row" v-for="(item, index) in scheduleDays" :key="index" style="padding: 5px;">
               <div class="column" style="width: 25%;">
                 <input type="checkbox" :value="item.value" v-model="days">
@@ -56,16 +67,16 @@
               <div class="column">
                 <p style="color: red;" v-if="item.status && days.includes(item.value)">Invalid time</p>
                 <span>
-                <vue-timepicker format="HH:mm" placeholder="Start Time" v-model="item.startTime" :value="item.startTime" @change="changeHandler(item)"></vue-timepicker>
+                <vue-timepicker format="hh:mm a" placeholder="Start Time" v-model="item.startTime" :value="item.startTime" @change="changeHandler(item)"></vue-timepicker>
                 <label for="monday"> - </label>  
-                <vue-timepicker format="HH:mm" placeholder="End Time" v-model="item.endTime" :value="item.endTime" @change="changeHandler(item)"></vue-timepicker>
+                <vue-timepicker format="hh:mm a" placeholder="End Time" v-model="item.endTime" :value="item.endTime" @change="changeHandler(item)"></vue-timepicker>
                 </span>
               </div>
             </div>
           </div>
         </div>
         
-        <button class="btn btn-primary" style="margin-bottom: 25px;" @click="update()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button>
+        <button class="btn btn-primary" style="margin-bottom: 25px; margin-top: -17px;" @click="update()" v-if="parseInt(data.account_id) === parseInt(user.userID)">Update</button>
       </span>
       <span class="sidebar" v-if="createFlag === false">
         <span class="sidebar-header" style="margin-top: 25px;">Business Logo</span>
@@ -90,6 +101,9 @@
   </div>
 </template>
 <style scoped>
+.standard-height {
+  height: 45px;;
+}
 .merchant-holder{
   width: 95%;
   float: left;
@@ -285,7 +299,10 @@ export default {
           style: {
           }
         }
-      }
+      },
+      cuisine: null,
+      cuisineList: [],
+      info: null
     }
   },
   props: ['title', 'allowed'],
@@ -296,6 +313,15 @@ export default {
     VueTimepicker
   },
   methods: {
+    removeCuisine(index) {
+      this.cuisineList.splice(index, 1)
+    },
+    addCuisine() {
+      if(this.cuisine !== null || this.cuisine !== '') {
+        this.cuisineList.push(this.cuisine)
+        this.cuisine = null
+      }
+    },
     checkSchedule() {
       let temp = false
       this.scheduleDays.forEach(element => {
@@ -346,14 +372,20 @@ export default {
         }
       })
     },
+    getTwentyFourHourTime(amPmString) {
+      var d = new Date('1/1/2021 ' + amPmString)
+      return d.getHours() + ':' + d.getMinutes()
+    },
     changeHandler(item) {
       if(item.startTime && item.endTime) {
+        let start = this.getTwentyFourHourTime(item.startTime.hh + ':' + item.startTime.mm + ' ' + item.startTime.a).split(':')
+        let end = this.getTwentyFourHourTime(item.endTime.hh + ':' + item.endTime.mm + ' ' + item.endTime.a).split(':')
         var date = new Date()
-        date.setHours(item.startTime.HH, item.startTime.mm, 0)
+        date.setHours(start[0], start[1], 0)
         var date2 = new Date()
-        date2.setHours(item.endTime.HH, item.endTime.mm, 0)
-        item.status = (date.getTime() >= date2.getTime()) || (item.startTime.HH === '00' && item.startTime.mm === '00')
-        console.log(item.startTime.HH, 'test')
+        date2.setHours(end[0], end[1], 0)
+        console.log(item.startTime, item.endTime, 'wanna go home')
+        item.status = date.getTime() >= date2.getTime() && item.startTime.hh !== '' && item.endTime.hh !== ''
       }
     },
     updateSchedule() {
@@ -410,6 +442,16 @@ export default {
               })
             })
           }
+          let additional = null
+          try {
+            additional = JSON.parse(response.data[0].addition_informations)
+            this.info = additional.information
+            this.cuisineList = additional.cuisine
+          } catch (e) {
+            console.log(e)
+          }
+          response.data[0].addition_informations = additional
+          console.log(response.data[0], 'yo')
           this.days = days
           this.data = response.data[0]
           this.createFlag = false
@@ -436,6 +478,7 @@ export default {
           if(typeof this.data.address === 'object') {
             this.data.address = JSON.stringify(this.data.address)
           }
+          this.data.addition_informations = JSON.stringify({information: this.info, cuisine: this.cuisineList})
           this.APIRequest('merchants/update', this.data).then(response => {
             $('#loading').css({display: 'none'})
             if(response.data === true){
@@ -466,6 +509,7 @@ export default {
       if(typeof this.data.address === 'object') {
         this.data.address = JSON.stringify(this.data.address)
       }
+      this.data.addition_informations = JSON.stringify({information: this.info, cuisine: this.cuisineList})
       $('#loading').css({display: 'block'})
       this.APIRequest('merchants/create', this.data).then(response => {
         $('#loading').css({display: 'none'})
