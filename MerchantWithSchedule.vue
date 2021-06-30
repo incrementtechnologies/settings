@@ -317,7 +317,7 @@ export default {
       this.cuisineList.splice(index, 1)
     },
     addCuisine() {
-      if(this.cuisine !== null || this.cuisine !== '') {
+      if(this.cuisine !== null && this.cuisine !== '') {
         this.cuisineList.push(this.cuisine)
         this.cuisine = null
       }
