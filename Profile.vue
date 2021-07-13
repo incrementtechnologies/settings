@@ -12,7 +12,7 @@
     <span class="content">
       <span class="inputs" v-if="data !== null">
         <div class="form-group" style="margin-top: 25px;">
-          <label for="address">First Name</label>
+          <label for="address">First Name <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Enter First Name" v-model="data.first_name">
         </div>
 
@@ -22,7 +22,7 @@
         </div>
 
         <div class="form-group">
-          <label for="address">Last Name</label>
+          <label for="address">Last Name <label class="text-danger">*</label></label>
           <input type="text" class="form-control" placeholder="Enter Last Name" v-model="data.last_name">
         </div>
 

@@ -155,8 +155,6 @@ export default {
       this.allowed = params.allowed
       this.activeType = params.type
       this.title = params.title
-      console.log('lalaine')
-      console.log(this.allowed.includes('schedule'))
     }
   }
 }
