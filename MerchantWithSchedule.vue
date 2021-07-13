@@ -332,12 +332,16 @@ export default {
       return temp
     },
     getResult($event) {
-      let address = {
-        name: $event.formatted_address,
-        latitude: $event.latitude,
-        longitude: $event.longitude
+      if($event !== null) {
+        let address = {
+          name: $event.formatted_address,
+          latitude: $event.latitude,
+          longitude: $event.longitude
+        }
+        this.data.address = address
+      } else {
+        this.data.address = null
       }
-      this.data.address = address
     },
     removeImage(id){
       let parameter = {
@@ -384,7 +388,6 @@ export default {
         date.setHours(start[0], start[1], 0)
         var date2 = new Date()
         date2.setHours(end[0], end[1], 0)
-        console.log(item.startTime, item.endTime, 'wanna go home')
         item.status = date.getTime() >= date2.getTime() && item.startTime.hh !== '' && item.endTime.hh !== ''
       }
     },
@@ -470,6 +473,10 @@ export default {
         this.data.logo = url
       }
       if(this.createFlag === false){
+        if(this.data.name === '' || this.data.address === '' || this.data.name === null || this.data.address === null) {
+          this.errorMessage = 'Please provide input to all required fields.'
+          return
+        }
         if(this.data.name !== this.temp.name || this.data.email !== this.temp.email || this.data.business_code !== this.temp.business_code || this.data.prefix !== this.temp.prefix || this.data.website !== this.temp.website || this.data.logo !== this.temp.logo || this.data.schedule !== this.temp.schedule) {
           $('#loading').css({display: 'block'})
           if(typeof this.data.schedule === 'object') {
@@ -499,6 +506,10 @@ export default {
     },
     create(url){
       this.data.logo = url
+      if(this.data.name === '' || this.data.address === '' || this.data.name === null || this.data.address === null) {
+        this.errorMessage = 'Please provide input to all required fields.'
+        return
+      }
       if(this.data.email !== null && AUTH.validateEmail(this.data.email) === false){
         this.errorMessage = 'Invalid email address.'
         return

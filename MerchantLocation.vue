@@ -98,6 +98,7 @@ export default {
   methods: {
     getPlaces(){
       if(this.searchValue === null || this.searchValue === ''){
+        this.$emit('onFinish', null)
         return
       }
       if(this.searchValue.length < 3){
