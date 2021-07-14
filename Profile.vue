@@ -234,7 +234,6 @@ export default {
       })
     },
     update(){
-      console.log(this.temp)
       if(this.validate()){
         if(this.temp.fname !== this.data.first_name || this.temp.lname !== this.data.last_name || this.temp.mname !== this.data.middle_name || this.temp.number !== this.data.cellular_number || this.temp.address !== this.data.address || this.temp.bdate !== this.data.birth_date) {
           $('#loading').css({'display': 'block'})
@@ -285,8 +284,16 @@ export default {
     },
     validate(){
       let i = this.data
-      if(i.first_name !== null && i.last_name !== null){
+      if(i.first_name !== null && i.first_name !== '' && i.last_name !== null && i.last_name !== ''){
+        this.alertMessage = {
+          type: null,
+          message: null
+        }
         return true
+      }
+      this.alertMessage = {
+        type: 'warning',
+        message: 'Please provide input to all required fields.'
       }
       return false
     },
