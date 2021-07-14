@@ -474,6 +474,7 @@ export default {
       }
       if(this.createFlag === false){
         if(this.data.name === '' || this.data.address === '' || this.data.name === null || this.data.address === null) {
+          this.successMessage = null
           this.errorMessage = 'Please provide input to all required fields.'
           return
         }
@@ -507,6 +508,7 @@ export default {
     create(url){
       this.data.logo = url
       if(this.data.name === '' || this.data.address === '' || this.data.name === null || this.data.address === null) {
+        this.successMessage = null
         this.errorMessage = 'Please provide input to all required fields.'
         return
       }
