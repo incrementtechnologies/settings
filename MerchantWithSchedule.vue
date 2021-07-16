@@ -318,7 +318,8 @@ export default {
     },
     addCuisine() {
       if(this.cuisine !== null && this.cuisine !== '') {
-        this.cuisineList.push(this.cuisine)
+        let c = this.cuisine.charAt(0).toUpperCase() + this.cuisine.slice(1).toLowerCase()
+        this.cuisineList.push(c)
         this.cuisine = null
       }
     },
