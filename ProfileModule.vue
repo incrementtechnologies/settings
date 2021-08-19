@@ -17,12 +17,8 @@
       </span>
     </div>
     <div class="content">
-      <profile v-if="activeType === 'profile'" :allowed="allowed"></profile>
-      <account v-if="activeType === 'account'"></account>
-      <payment v-if="activeType === 'payment_method'"></payment>
-      <billing-information v-if="activeType === 'billing_information'"></billing-information>
+      <account v-if="activeType === 'account'" :fromProfile="true"></account>
       <merchant v-if="activeType === 'merchant'" :allowed="allowed" :title="title"></merchant>
-      <notification v-if="activeType === 'notification'"></notification>
     </div>
   </div>
 
@@ -54,7 +50,8 @@
   line-height: 40px;
   padding-left: 10px;
   border-bottom: solid 1px #ddd;
-  background: #eee;
+  background: $primary;
+  color: white;
 }
 .sidebar .item{
   height: 40px;
@@ -131,20 +128,15 @@ export default {
       tokenData: AUTH.tokenData,
       config: CONFIG,
       menu: COMMON.settingsMenu,
-      activeType: 'profile',
+      activeType: 'account',
       parameter: this.$route.params.parameter,
       title: 'Show Menu',
       allowed: []
     }
   },
   components: {
-    'profile': require('components/increment/settings/Profile.vue'),
-    'account': require('components/increment/settings/Account.vue'),
-    'payment': require('components/increment/settings/Payment.vue'),
-    'merchant-with-schedule': require('components/increment/settings/MerchantWithSchedule.vue'),
-    'billing-information': require('components/increment/settings/BillingInformation.vue'),
-    'merchant': require('components/increment/settings/Merchant.vue'),
-    'notification': require('components/increment/settings/Notification.vue')
+    'account': require('src/modules/accountSettings/index.vue'),
+    'merchant': require('src/modules/accountSettings/Merchant.vue')
   },
   methods: {
     redirect(path){
