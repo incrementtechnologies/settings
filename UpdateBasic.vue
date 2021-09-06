@@ -22,6 +22,7 @@
       <payment v-if="activeType === 'payment_method'"></payment>
       <billing-information v-if="activeType === 'billing_information'"></billing-information>
       <merchant v-if="activeType === 'merchant'" :allowed="allowed" :title="title"></merchant>
+      <merchant-with-schedule v-if="activeType === 'merchant-with-schedule'" :allowed="allowed" :title="title"></merchant-with-schedule>
       <notification v-if="activeType === 'notification'"></notification>
     </div>
   </div>
