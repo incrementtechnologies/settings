@@ -11,10 +11,16 @@
           </div>
           <div class="modal-body">
             <span class="settings">
-              <p v-if="errorMessage !== null" class="text-danger" style="margin-top: 10px;">
-                <b>Opps!</b> {{errorMessage}}
-              </p>
-                <span class="image-holder" style="text-align: center;" @click="addImage()">
+              <span v-if="errorMessage !== null" class="alert-message">
+                <p :class="`alert alert-warning alert-dismissible fade show`" role="alert">
+                  {{ errorMessage }}
+                  <button @click="errorMessage = null" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </p>
+              </span>
+              <br>
+                <span class="image-holder" style="text-align: center;" @click="addImage">
                   <i class="fa fa-plus" style="font-size: 60px; line-height: 200px;"></i>
                   <input type="file" id="FeaturedImage" :accept="type ? type : 'image/*'" @change="setUpFileUpload($event)">
                 </span>
@@ -190,7 +196,8 @@ export default {
     redirect(parameter){
       ROUTER.push(parameter)
     },
-    addImage(){
+    addImage(event){
+      event.target.value = ''
       $('#FeaturedImage')[0].click()
     },
     setUpFileUpload(event){
