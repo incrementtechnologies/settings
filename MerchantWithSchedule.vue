@@ -57,7 +57,7 @@
           <input class="form-control standard-height" placeholder="Schedule" v-model="days" disabled><br>
           <button class="btn btn-secondary pull-right" v-if="!showSched" style="margin-right: 5px;" @click="showSched = true">Update Schedule</button>
           <button class="btn btn-danger pull-right" v-if="showSched" style="margin-right: 5px;" @click="showSched = false">Cancel</button>
-          <button class="btn btn-secondary pull-right" v-if="showSched" :disabled="checkSchedule()" style="margin-right: 5px;" @click="showSched = false, updateSchedule()">Confirm Update</button>
+          <button class="btn btn-secondary pull-right" v-if="showSched" style="margin-right: 5px;" @click="showSched = false, updateSchedule()">Confirm Update</button>
           <div v-if="showSched" style="width: 100%; margin-top: 40px; margin-bottom: 30px; padding-bottom: 90px;">
             <div class="row" v-for="(item, index) in scheduleDays" :key="index" style="padding: 5px;">
               <div class="column" style="width: 25%;">
@@ -65,11 +65,10 @@
                 <label for="monday"> {{item.value}}</label>
               </div>
               <div class="column">
-                <p style="color: red;" v-if="item.status && days.includes(item.value)">Invalid time</p>
                 <span>
-                <vue-timepicker format="hh:mm a" placeholder="Start Time" v-model="item.startTime" :value="item.startTime" @change="changeHandler(item)"></vue-timepicker>
+                <vue-timepicker format="hh:mm a" placeholder="Start Time" v-model="item.startTime" :value="item.startTime"></vue-timepicker>
                 <label for="monday"> - </label>  
-                <vue-timepicker format="hh:mm a" placeholder="End Time" v-model="item.endTime" :value="item.endTime" @change="changeHandler(item)"></vue-timepicker>
+                <vue-timepicker format="hh:mm a" placeholder="End Time" v-model="item.endTime" :value="item.endTime"></vue-timepicker>
                 </span>
               </div>
             </div>
@@ -323,15 +322,6 @@ export default {
         this.cuisine = null
       }
     },
-    checkSchedule() {
-      let temp = false
-      this.scheduleDays.forEach(element => {
-        if(element.status && this.days.includes(element.value)) {
-          temp = true
-        }
-      })
-      return temp
-    },
     getResult($event) {
       if($event !== null) {
         let address = {
@@ -380,17 +370,6 @@ export default {
     getTwentyFourHourTime(amPmString) {
       var d = new Date('1/1/2021 ' + amPmString)
       return d.getHours() + ':' + d.getMinutes()
-    },
-    changeHandler(item) {
-      if(item.startTime && item.endTime) {
-        let start = this.getTwentyFourHourTime(item.startTime.hh + ':' + item.startTime.mm + ' ' + item.startTime.a).split(':')
-        let end = this.getTwentyFourHourTime(item.endTime.hh + ':' + item.endTime.mm + ' ' + item.endTime.a).split(':')
-        var date = new Date()
-        date.setHours(start[0], start[1], 0)
-        var date2 = new Date()
-        date2.setHours(end[0], end[1], 0)
-        item.status = date.getTime() >= date2.getTime() && item.startTime.hh !== '' && item.endTime.hh !== ''
-      }
     },
     updateSchedule() {
       let schedule = []
