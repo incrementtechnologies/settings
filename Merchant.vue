@@ -222,7 +222,7 @@ export default {
           clause: '='
         }]
       }
-      this.APIRequest('merchants/retrieve', parameter).then(response => {
+      this.APIRequest('account_merchants/retrieve', parameter).then(response => {
         $('#loading').css({display: 'none'})
         if(response.data.length > 0){
           this.data = response.data[0]
