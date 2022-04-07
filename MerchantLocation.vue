@@ -39,7 +39,7 @@ label{
 .close-icon{
   position: absolute;
   right: 10px;
-  top: 10px;
+  top: 5px;
   height: 30px;
   width: 30px;
   line-height: 30px;
