@@ -1,6 +1,6 @@
 <template>
   <div class="google-autocomplete-holder">
-    <input type="text" class="form-control" v-model="searchValue" :style="property.style" @keyup="getPlaces()" :placeholder="property.placeholder ? property.placeholder : 'Type location'">
+    <input type="text" class="form-control" v-model="searchValue" :style="property.style" v-on:keyup="getPlaces()" :placeholder="property.placeholder ? property.placeholder : 'Type location'">
     <span class="close-icon" @click="onCancel()" v-if="results !== null || selectedFlag === true">
       <i class="fas fa-times"></i>
     </span>
@@ -101,6 +101,7 @@ export default {
         this.$emit('onFinish', null)
         return
       }
+      this.$emit('onFinish', this.searchValue)
       if(this.searchValue.length < 3){
         return
       }
