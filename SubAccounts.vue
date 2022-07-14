@@ -24,6 +24,7 @@
           <td>
             <button class="btn btn-primary" @click="showModal('update', item)" v-if="user.userID !== item.account.id">EDIT</button>
             <button class="btn btn-danger" @click="confirmDelete(item.id, item.account.id)" v-if="user.userID !== item.account.id">DELETE</button>
+            <button class="btn btn-warning" @click="showModal('resend', item)" v-if="user.userID !== item.account.id">RESEND INVITATION</button>
           </td>
         </tr>
       </tbody>
@@ -239,6 +240,50 @@ export default {
           })
           this.createSubAccountModal = {...modalData}
           break
+        case 'resend':
+          this.$refs.modal.errorMessage = null
+          let modalDatas = {...this.createSubAccountModal}
+          let parameters = {
+            title: 'Resend Invitation',
+            route: 'accounts/resend_invitation',
+            button: {
+              left: 'Cancel',
+              right: 'Re-send'
+            },
+            sort: {
+              column: 'created_at',
+              value: 'desc'
+            },
+            params: [{
+              variable: 'id',
+              value: item.id
+            }, {
+              variable: 'account_id',
+              value: item.member
+            }]
+          }
+          modalDatas = {...modalDatas, ...parameters} // updated data without input values
+          modalDatas.inputs.map(data => {
+            if(data.variable === 'status'){
+              data.value = item.status
+            }
+            if(data.variable === 'username'){
+              data.value = item.account.username
+              data.disabled = true
+            }
+            if(data.variable === 'email'){
+              data.validation.flag = true
+              data.value = item.account.email
+              data.disabled = true
+            }
+            if(data.variable === 'password'){
+              data.disabled = false
+              data.placeholder = 'Re enter the password'
+              data.value = null
+            }
+          })
+          this.createSubAccountModal = {...modalDatas}
+          break
       }
       $('#createSubAccountModal').modal('show')
     },
@@ -256,6 +301,9 @@ export default {
           this.retrieve({'id': 'asc'}, {column: 'id', value: ''})
         })
       })
+    },
+    resendInvitation(id, accountIdd){
+
     }
   }
 }
